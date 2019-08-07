@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
 ##~---------------------------------------------------------------------------##
-##                     _______  _______  _______  _     _                     ##
-##                    |   _   ||       ||       || | _ | |                    ##
-##                    |  |_|  ||       ||   _   || || || |                    ##
-##                    |       ||       ||  | |  ||       |                    ##
-##                    |       ||      _||  |_|  ||       |                    ##
-##                    |   _   ||     |_ |       ||   _   |                    ##
-##                    |__| |__||_______||_______||__| |__|                    ##
-##                             www.amazingcow.com                             ##
-##  File      : install.sh                                                    ##
-##  Project   : Gosh                                                          ##
+##                        _      _                 _   _                      ##
+##                    ___| |_ __| |_ __ ___   __ _| |_| |_                    ##
+##                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   ##
+##                   \__ \ || (_| | | | | | | (_| | |_| |_                    ##
+##                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   ##
+##                                                                            ##
+##  File      : gosh.sh                                                       ##
+##  Project   : gosh                                                          ##
 ##  Date      : Jan 02, 2018                                                  ##
 ##  License   : GPLv3                                                         ##
-##  Author    : n2omatt <n2omatt@amazingcow.com>                              ##
-##  Copyright : AmazingCow - 2018                                             ##
+##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
+##  Copyright : stdmatt - 2018 - 2019                                         ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
 
+
 ##----------------------------------------------------------------------------##
 ## Constants                                                                  ##
 ##----------------------------------------------------------------------------##
-PW_SHELLSCRIPT_UTILS="/usr/local/src/pixelwizards/shellscript_utils/main.sh";
+PW_SHELLSCRIPT_UTILS="/usr/local/src/stdmatt/shellscript_utils/main.sh";
 INSTALL_DIR="/usr/local/bin";
 
 
