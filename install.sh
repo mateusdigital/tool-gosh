@@ -53,12 +53,12 @@ _install_source_on()
 ##
 ## Make sure that we have the shellscript_utls lib.
 if [ ! -e "$PW_SHELLSCRIPT_UTILS" ]; then
-    echo "Error - The Pixel Wizard's shellscript_utils library wasn't found at path:";
+    echo "Error - The stdmatt's shellscript_utils library wasn't found at path:";
     echo "    ($PW_SHELLSCRIPT_UTILS)."
     echo "";
     echo "This library is required to use manpdf, so you need to install it first.";
     echo "You can find it at the following url:";
-    echo "    (https://gitlab.com/pixelwizardsio/libs/shellscript_utils)";
+    echo "    (https://gitlab.com/stdmatt-libs/shellscript_utils)";
     echo "";
     echo "Aborting...";
 
