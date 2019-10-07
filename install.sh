@@ -70,11 +70,11 @@ source "$PW_SHELLSCRIPT_UTILS";
 
 ##
 ## Install the files.
-cp -f ./gosh-core.py  $INSTALL_DIR/gosh-core
-cp -f ./gosh.sh       $INSTALL_DIR/gosh
+cp -f ./gosh-core.py  $INSTALL_DIR/gosh-core.py
+cp -f ./gosh.sh       $INSTALL_DIR/gosh.sh
 
-chmod 755 $INSTALL_DIR/gosh-core
-chmod 755 $INSTALL_DIR/gosh
+chmod 755 $INSTALL_DIR/gosh-core.py
+chmod 755 $INSTALL_DIR/gosh.sh
 
 
 ##
