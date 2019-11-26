@@ -17,7 +17,6 @@
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
 
-
 ##----------------------------------------------------------------------------##
 ## Constants                                                                  ##
 ##----------------------------------------------------------------------------##
@@ -28,6 +27,7 @@ INSTALL_DIR="/usr/local/bin";
 ##----------------------------------------------------------------------------##
 ## Helper Functions                                                           ##
 ##----------------------------------------------------------------------------##
+##------------------------------------------------------------------------------
 _install_source_on()
 {
     local PATH_TO_INSTALL="$1";
@@ -46,6 +46,27 @@ _install_source_on()
     echo "Done...";
 }
 
+##------------------------------------------------------------------------------
+ensure_install_directory()
+{
+    if [ ! -d "$INSTALL_DIR" ]; then
+        pw_log_warning                                                             \
+            "The installation directory ($INSTALL_DIR) doesn't exists."            \
+            "This indeed shows that it might be not in the PATH variable as well." \
+            "gosh will fails to execute because it'll not find the gosh-core.py"   \
+            ""                                                                     \
+            "A directory will be created at ($INSTALL_DIR) automatically, but"     \
+            "make sure to add the ($INSTALL_DIR) to your path."                    \
+            ""                                                                     \
+            "PATH=\$PATH:$INSTALL_DIR"                                             \
+            ""                                                                     ;
+
+    fi;
+
+    local SUDO=$(pw_get_sudo_path);
+    $SUDO mkdir -pv "$INSTALL_DIR";
+}
+
 
 ##----------------------------------------------------------------------------##
 ## Script                                                                     ##
@@ -56,7 +77,7 @@ if [ ! -e "$PW_SHELLSCRIPT_UTILS" ]; then
     echo "Error - The stdmatt's shellscript_utils library wasn't found at path:";
     echo "    ($PW_SHELLSCRIPT_UTILS)."
     echo "";
-    echo "This library is required to use manpdf, so you need to install it first.";
+    echo "This library is required to use gosh, so you need to install it first.";
     echo "You can find it at the following url:";
     echo "    (https://gitlab.com/stdmatt-libs/shellscript_utils)";
     echo "";
@@ -70,6 +91,8 @@ source "$PW_SHELLSCRIPT_UTILS";
 
 ##
 ## Install the files.
+ensure_install_directory;
+
 cp -f ./gosh-core.py  $INSTALL_DIR/gosh-core.py
 cp -f ./gosh.sh       $INSTALL_DIR/gosh.sh
 
