@@ -49,6 +49,10 @@ _install_source_on()
 ##------------------------------------------------------------------------------
 ensure_install_directory()
 {
+    pw_can_write_at_path "$INSTALL_DIR";
+    test $? != 0 &&  \
+        pw_log_fatal "Can't write at path ($INSTALL_DIR)";
+
     if [ ! -d "$INSTALL_DIR" ]; then
         pw_log_warning                                                             \
             "The installation directory ($INSTALL_DIR) doesn't exists."            \
