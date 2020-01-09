@@ -110,10 +110,11 @@ DEFAULT_BASH_RC=$(pw_get_default_bashrc_or_profile);
 USE_BASH_RC=$(pw_getopt_exists "$@" "--bashrc");
 USE_BASH_PROFILE=$(pw_getopt_exists $@ "--bash-profile");
 
+USER_HOME=$(pw_find_real_user_home);
 if [ -n "$USE_BASH_RC" ]; then
-    _install_source_on "$HOME/.bashrc";
+    _install_source_on "$USER_HOME/.bashrc";
 elif [ -n "$USE_BASH_PROFILE" ]; then
-    _install_source_on "$HOME/.bash_profile";
+    _install_source_on "$USR_HOME/.bash_profile";
 else
     _install_source_on $DEFAULT_BASH_RC;
 fi
