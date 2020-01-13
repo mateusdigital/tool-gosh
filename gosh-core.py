@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##~---------------------------------------------------------------------------##
 ##                        _      _                 _   _                      ##
 ##                    ___| |_ __| |_ __ ___   __ _| |_| |_                    ##
@@ -11,7 +11,7 @@
 ##  Date      : Sep 28, 2015                                                  ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
-##  Copyright : stdmatt - 2015 - 2019                                         ##
+##  Copyright : stdmatt - 2015 - 2020                                         ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##                                                                            ##
@@ -34,7 +34,7 @@ from difflib import SequenceMatcher as SM;
 #will just return the plain string.
 try:
     from termcolor import colored;
-except Exception, e:
+except Exception as e:
     def colored(msg, color): return msg;
 
 
@@ -157,7 +157,7 @@ def read_bookmarks():
 
             Globals.bookmarks[name] = path;
 
-    except Exception, e:
+    except Exception as e:
         ##
         ## Failed to unpack, this is because the bookmarks aren't in form of
         ##    Name SEPARATOR Path.
@@ -200,7 +200,7 @@ def write_bookmarks():
         bookmarks_file = open(Constants.PATH_FILE_RC, "w");
         bookmarks_file.write(bookmarks_str);
 
-    except Exception, e:
+    except Exception as e:
         print_fatal("Error while writing file. {0}".format(str(e)));
 
     finally:
@@ -381,12 +381,12 @@ def _get_home_path_for_cygwin(path):
 ##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
 def print_fatal(msg):
-    print "{0} {1}".format(C.red("[FATAL]"), msg);
+    print("{0} {1}".format(C.red("[FATAL]"), msg));
     exit(1);
 
 ##------------------------------------------------------------------------------
 def print_help():
-    print """Usage:
+    print("""Usage:
   gosh                        (Same as gosh -l)
   gosh <name>                 (To change the directory)
   gosh -h | -v                (Show help | version)
@@ -417,16 +417,16 @@ Notes:
 
   Options marked with * are exclusive, i.e. the gosh will run that
   and exit after the operation.
-"""
+""");
     exit(0);
 
 ##------------------------------------------------------------------------------
 def print_version():
-    print "\n".join([
-        "gosh - 0.7.4 - N2OMatt <n2omatt@amazingcow.com>",
-        "Copyright (c) 2015 - 2017 - Amazing Cow",
+    print("\n".join([
+        "gosh - 0.8.0 - stdmatt <stdmatt@pixelwizards.io>",
+        "Copyright (c) 2015 - 2020 - stdmatt",
         "This is a free software (GPLv3) - Share/Hack it",
-        "Check opensource.amazingcow.com for more :)"]);
+        "Check http://stdmatt.com for more :)"]));
 
     exit(0);
 
@@ -439,7 +439,7 @@ def action_list_bookmarks(long = False):
     read_bookmarks();
 
     if(len(Globals.bookmarks) == 0):
-        print "No bookmarks yet... :/";
+        print("No bookmarks yet... :/");
         exit(0);
 
     ##
@@ -451,13 +451,13 @@ def action_list_bookmarks(long = False):
         path   = Globals.bookmarks[key];
 
         if(long):
-            print "{_key}{_spaces} : {_path}".format(
+            print("{_key}{_spaces} : {_path}".format(
                 _key    = C.blue(key),
                 _spaces = spaces,
                 _path   = C.magenta(path)
-            );
+            ));
         else:
-            print C.blue(key);
+            print(C.blue(key));
 
     exit(0);
 
@@ -488,7 +488,7 @@ def action_add_bookmark(name, path):
         C.blue   (name),
         C.magenta(added_path)
     );
-    print msg;
+    print(msg);
 
     write_bookmarks(); #Save to file
     exit(0);
@@ -507,7 +507,7 @@ def action_remove_bookmark(name):
 
     ## Bookmark exists... Remove it and inform the user.
     del Globals.bookmarks[name];
-    print "Bookmark removed:\n  ({0})".format(C.blue(name));
+    print("Bookmark removed:\n  ({0})".format(C.blue(name)));
 
     write_bookmarks(); #Save to file
     exit(0);
@@ -538,7 +538,7 @@ def action_update_bookmark(name, path):
         C.blue   (name),
         C.magenta(updated_path)
     );
-    print msg;
+    print(msg);
 
     write_bookmarks(); #Save to file
     exit(0);
@@ -550,10 +550,10 @@ def action_bookmark_exists(path):
 
     bookmark_name = bookmark_for_path(path);
     if(bookmark_name is None):
-        print "No bookmark";
+        print("No bookmark");
         exit(1);
     else:
-        print "Bookmark: ({0})".format(C.blue(bookmark_name));
+        print("Bookmark: ({0})".format(C.blue(bookmark_name)));
         exit(0);
 
 ##------------------------------------------------------------------------------
@@ -568,7 +568,7 @@ def action_print_bookmark(name):
 
     if(not bookmark_exists(name)):
         msg = "Bookmark ({0}) doesn't exists.".format(C.blue(name));
-        print msg;
+        print(msg);
         exit(1);
 
     ## Bookmark exists, check if path is valid.
@@ -581,12 +581,12 @@ def action_print_bookmark(name):
             "exists but it's path is invalid.",
             C.magenta(bookmark_path)
         );
-        print msg;
+        print(msg);
         exit(1);
 
     ## Bookmark and path are valid.
     ## Print the path to gosh shell script change the directory.
-    print bookmark_path;
+    print(bookmark_path);
     exit(0);
 
 
