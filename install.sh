@@ -11,7 +11,7 @@
 ##  Date      : Jan 02, 2018                                                  ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
-##  Copyright : stdmatt - 2018 - 2019                                         ##
+##  Copyright : stdmatt - 2018 - 2020                                         ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##                                                                            ##
@@ -97,8 +97,9 @@ source "$PW_SHELLSCRIPT_UTILS";
 ## Install the files.
 ensure_install_directory;
 
-cp -f ./gosh-core.py  $INSTALL_DIR/gosh-core.py
-cp -f ./gosh.sh       $INSTALL_DIR/gosh.sh
+SCRIPT_DIR=$(pw_get_script_dir);
+cp -f $SCRIPT_DIR/gosh-core.py  $INSTALL_DIR/gosh-core.py
+cp -f $SCRIPT_DIR/gosh.sh       $INSTALL_DIR/gosh.sh
 
 chmod 755 $INSTALL_DIR/gosh-core.py
 chmod 755 $INSTALL_DIR/gosh.sh
