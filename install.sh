@@ -31,7 +31,7 @@ INSTALL_DIR="/usr/local/bin";
 _install_source_on()
 {
     local PATH_TO_INSTALL="$1";
-    echo "Installing dots on ($PATH_TO_INSTALL)";
+    echo "Installing gosh on ($PATH_TO_INSTALL)";
 
     if [ ! -e "$PATH_TO_INSTALL" ]; then
         pw_log_fatal "$PATH_TO_INSTALL does not exists - Aborting...";
@@ -75,6 +75,8 @@ ensure_install_directory()
 ##----------------------------------------------------------------------------##
 ## Script                                                                     ##
 ##----------------------------------------------------------------------------##
+echo "[Installing gosh]";
+
 ##
 ## Make sure that we have the shellscript_utls lib.
 if [ ! -e "$PW_SHELLSCRIPT_UTILS" ]; then
