@@ -49,11 +49,7 @@ _install_source_on()
 ##------------------------------------------------------------------------------
 ensure_install_directory()
 {
-    pw_can_write_at_path "$INSTALL_DIR";
-    test $? != 0 &&  \
-        pw_log_fatal "Can't write at path ($INSTALL_DIR)";
-
-    if [ ! -d "$INSTALL_DIR" ]; then
+   if [ ! -d "$INSTALL_DIR" ]; then
         pw_log_warning                                                             \
             "The installation directory ($INSTALL_DIR) doesn't exists."            \
             "This indeed shows that it might be not in the PATH variable as well." \
@@ -64,11 +60,9 @@ ensure_install_directory()
             ""                                                                     \
             "PATH=\$PATH:$INSTALL_DIR"                                             \
             ""                                                                     ;
-
     fi;
 
-    local SUDO=$(pw_get_sudo_path);
-    $SUDO mkdir -pv "$INSTALL_DIR";
+    pw_as_super_user mkdir -pv "$INSTALL_DIR";
 }
 
 

@@ -423,7 +423,7 @@ Notes:
 ##------------------------------------------------------------------------------
 def print_version():
     print("\n".join([
-        "gosh - 0.8.1 - stdmatt <stdmatt@pixelwizards.io>",
+        "gosh - 0.8.2 - stdmatt <stdmatt@pixelwizards.io>",
         "Copyright (c) 2015 - 2020 - stdmatt",
         "This is a free software (GPLv3) - Share/Hack it",
         "Check http://stdmatt.com for more :)"]));
