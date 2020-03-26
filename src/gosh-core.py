@@ -28,15 +28,7 @@ import getopt;
 import pdb;
 import subprocess;
 from difflib import SequenceMatcher as SM;
-
-#Termcolor isn't a standard module (but is really nice), so we must
-#support system that doens't has it. On those systems the colored,
-#will just return the plain string.
-try:
-    from termcolor import colored;
-except Exception as e:
-    def colored(msg, color): return msg;
-
+from mcow_py_termcolor import termcolor;
 
 ##----------------------------------------------------------------------------##
 ## Constants / Globals                                                        ##
@@ -108,20 +100,20 @@ class Globals:
 class C:
     @staticmethod
     def red(msg):
-        return C._colored(msg, "red");
+        return C._colored(msg, termcolor.RED);
 
     @staticmethod
     def blue(msg):
-        return C._colored(msg, "blue");
+        return C._colored(msg, termcolor.BLUE);
 
     @staticmethod
     def magenta(msg):
-        return C._colored(msg, "magenta");
+        return C._colored(msg, termcolor.MAGENTA);
 
     @staticmethod
     def _colored(msg, color):
         if(not Globals.opt_no_colors):
-            return colored(msg, color);
+            return termcolor.colored(msg, color);
         return msg;
 
 
