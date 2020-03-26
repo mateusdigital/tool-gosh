@@ -34,7 +34,7 @@ from mcow_py_termcolor import termcolor;
 ## Constants / Globals                                                        ##
 ##----------------------------------------------------------------------------##
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "0.0.0";
+PROGRAM_VERSION   = "1.0.0";
 PROGRAM_COPYRIGHT = "2015 - 2020";
 
 ##------------------------------------------------------------------------------
