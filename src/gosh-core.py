@@ -41,6 +41,10 @@ except Exception as e:
 ##----------------------------------------------------------------------------##
 ## Constants / Globals                                                        ##
 ##----------------------------------------------------------------------------##
+PROGRAM_NAME      = "gosh";
+PROGRAM_VERSION   = "0.0.0";
+PROGRAM_COPYRIGHT = "2015 - 2020";
+
 ##------------------------------------------------------------------------------
 class Constants:
     ##
@@ -422,12 +426,19 @@ Notes:
 
 ##------------------------------------------------------------------------------
 def print_version():
-    print("\n".join([
-        "gosh - 0.8.2 - stdmatt <stdmatt@pixelwizards.io>",
-        "Copyright (c) 2015 - 2020 - stdmatt",
+    msg = "\n".join([
+        "{program_name} - {program_version} - stdmatt <stdmatt@pixelwizards.io>",
+        "Copyright (c) {program_copyright} - stdmatt",
         "This is a free software (GPLv3) - Share/Hack it",
-        "Check http://stdmatt.com for more :)"]));
+        "Check http://stdmatt.com for more :)"]);
 
+    msg = msg.format(
+        program_name=PROGRAM_NAME,
+        program_version=PROGRAM_VERSION,
+        program_copyright=PROGRAM_COPYRIGHT
+    );
+
+    print(msg);
     exit(0);
 
 
