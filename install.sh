@@ -31,7 +31,7 @@ INSTALL_DIR="/usr/local/bin";
 _install_source_on()
 {
     local PATH_TO_INSTALL="$1";
-    echo "Installing gosh on ($PATH_TO_INSTALL)";
+    echo "Installing gosh on ($(pw_FM $PATH_TO_INSTALL))";
 
     if [ ! -e "$PATH_TO_INSTALL" ]; then
         pw_log_fatal "$PATH_TO_INSTALL does not exists - Aborting...";
@@ -47,7 +47,7 @@ _install_source_on()
 }
 
 ##------------------------------------------------------------------------------
-ensure_install_directory()
+_ensure_install_directory()
 {
    if [ ! -d "$INSTALL_DIR" ]; then
         pw_log_warning                                                             \
@@ -91,27 +91,29 @@ source "$PW_SHELLSCRIPT_UTILS";
 
 ##
 ## Install the files.
-ensure_install_directory;
+_ensure_install_directory;
 
-SCRIPT_DIR=$(pw_get_script_dir);
-cp -f $SCRIPT_DIR/gosh-core.py  $INSTALL_DIR/gosh-core.py
-cp -f $SCRIPT_DIR/gosh.sh       $INSTALL_DIR/gosh.sh
+SCRIPT_DIR="$(pw_get_script_dir)";
+SRC_DIR="${SCRIPT_DIR}/src";
 
-chmod 755 $INSTALL_DIR/gosh-core.py
-chmod 755 $INSTALL_DIR/gosh.sh
+pw_as_super_user cp -f "${SRC_DIR}/gosh-core.py"  "$INSTALL_DIR/gosh-core.py";
+pw_as_super_user cp -f "${SRC_DIR}/gosh.sh"       "$INSTALL_DIR/gosh.sh";
+
+pw_as_super_user chmod 755 "$INSTALL_DIR/gosh-core.py"
+pw_as_super_user chmod 755 "$INSTALL_DIR/gosh.sh"
 
 
 ##
 ## Add a entry on the .bash_rc / .bash_profile so we can use the gosh.
-DEFAULT_BASH_RC=$(pw_get_default_bashrc_or_profile);
+DEFAULT_BASH_RC="$(pw_get_default_bashrc_or_profile)";
 USE_BASH_RC=$(pw_getopt_exists "$@" "--bashrc");
 USE_BASH_PROFILE=$(pw_getopt_exists $@ "--bash-profile");
 
 USER_HOME=$(pw_find_real_user_home);
 if [ -n "$USE_BASH_RC" ]; then
-    _install_source_on "$USER_HOME/.bashrc";
+    _install_source_on "${USER_HOME}/.bashrc";
 elif [ -n "$USE_BASH_PROFILE" ]; then
-    _install_source_on "$USR_HOME/.bash_profile";
+    _install_source_on "${USER_HOME}/.bash_profile";
 else
-    _install_source_on $DEFAULT_BASH_RC;
+    _install_source_on "${DEFAULT_BASH_RC}";
 fi
