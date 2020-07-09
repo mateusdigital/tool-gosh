@@ -106,8 +106,8 @@ pw_as_super_user chmod 755 "$INSTALL_DIR/gosh.sh"
 ##
 ## Add a entry on the .bash_rc / .bash_profile so we can use the gosh.
 DEFAULT_BASH_RC="$(pw_get_default_bashrc_or_profile)";
-USE_BASH_RC=$(pw_getopt_exists "$@" "--bashrc");
-USE_BASH_PROFILE=$(pw_getopt_exists $@ "--bash-profile");
+USE_BASH_RC=$(pw_getopt_exists      "$@" "--bashrc");
+USE_BASH_PROFILE=$(pw_getopt_exists "$@" "--bash-profile");
 
 USER_HOME=$(pw_find_real_user_home);
 if [ -n "$USE_BASH_RC" ]; then
@@ -117,3 +117,6 @@ elif [ -n "$USE_BASH_PROFILE" ]; then
 else
     _install_source_on "${DEFAULT_BASH_RC}";
 fi
+
+## Install the dependencies.
+pw_as_super_user python3 -m pip install pw_py_termcolor;

@@ -28,7 +28,8 @@ import getopt;
 import pdb;
 import subprocess;
 from difflib import SequenceMatcher as SM;
-from mcow_py_termcolor import termcolor;
+from pw_py_termcolor import *;
+
 
 ##----------------------------------------------------------------------------##
 ## Constants / Globals                                                        ##
