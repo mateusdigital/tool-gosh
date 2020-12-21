@@ -81,8 +81,8 @@ public:
 
 
 public:
-    bool IsEmpty() const { return __Container::empty(); }
-    bool Size   () const { return __Container::size (); }
+    bool   IsEmpty() const { return __Container::empty(); }
+    size_t Length () const { return __Container::size (); }
 
     bool 
     IsEmptyOrWhitespace() const
@@ -134,7 +134,7 @@ public:
             return;
         }
         // @todo(stdmatt): We are creating too much copies... Dec 20, 2020 
-        __Container::operator=(SubString(left_index, Size()));
+        __Container::operator=(SubString(left_index, Length()));
     }
 
     void

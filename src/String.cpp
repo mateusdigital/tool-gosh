@@ -2,21 +2,21 @@
 #include "String.hpp"
 
 bool 
-String::StartsWith(String const &neddle) const
+String::StartsWith(String const &needle) const
 {
     if(IsEmpty()) {
         return false;
     }
 
-    size_t const curr_size   = Size();
-    size_t const neddle_size = needle.Size();
+    size_t const curr_len   = Length();
+    size_t const needle_len = needle.Length();
 
-    if(needle.Size() > curr_size) {
+    if(needle.Length() > curr_len) {
         return false;
     }
 
-    for(size_t i = 0; i < needle_size; ++i) {
-        if(__Container::operator[](i) != neddle[i]) {
+    for(size_t i = 0; i < needle_len; ++i) {
+        if(__Container::operator[](i) != needle[i]) {
             return false;
         }
     }
@@ -28,28 +28,29 @@ String::StartsWith(String const &neddle) const
 bool 
 String::StartsWith(char const needle) const
 {
-    if(IsEmpty()) {
+    if(IsEmpty() || needle) {
         return false;
     }
-    return __Container::operator[](i) == neddle[i]);
+    
+    return __Container::operator[](0) == needle;
 }
 
 bool 
-String::EndsWith(String const &neddle) const
+String::EndsWith(String const &needle) const
 {
-    if(IsEmpty()) {
+    if(IsEmpty() || needle.IsEmpty()) {
         return false;
     }
 
-    size_t const curr_size   = Size();
-    size_t const neddle_size = needle.Size();
+    size_t const curr_len   = Length();
+    size_t const needle_len = needle.Length();
 
-    if(needle.Size() > curr_size) {
+    if(needle.Length() > curr_len) {
         return false;
     }
 
-    for(size_t i = 1; i < needle_size; ++i) {
-        if(__Container::operator[](curr_size - i) != neddle[neddle_size - i]) {
+    for(size_t i = 1; i < needle_len; ++i) {
+        if(__Container::operator[](curr_len- i) != needle[needle_len - i]) {
             return false;
         }
     }
@@ -63,19 +64,19 @@ String::EndsWith(char const needle) const
     if(IsEmpty()) {
         return false;
     }
-    return *__Container::back() == *neddle.back();
+    return __Container::back() == needle;
 }
 
 
 size_t 
-String::FindIndexOf(char const needle, size_t start_index = 0) const
+String::FindIndexOf(char const needle, size_t start_index /* = 0 */) const
 {
-    size_t const curr_size = Size();
-    if(IsEmpty() || start_index >= curr_size) {
+    size_t const curr_len = Length();
+    if(IsEmpty() || start_index >= curr_len) {
         return INVALID_STRING_INDEX;
     }
 
-    for(size_t i = start_index; i < curr_size; ++i) {
+    for(size_t i = start_index; i < curr_len; ++i) {
         if(__Container::operator[](i) == needle) {
             return i;
         }
@@ -86,14 +87,14 @@ String::FindIndexOf(char const needle, size_t start_index = 0) const
 
 
 size_t 
-String::FindFirstNotOf(char const needle, size_t start_index = 0) const
+String::FindFirstNotOf(char const needle, size_t start_index /* = 0 */) const
 {
-    size_t const curr_size = Size();
-    if(IsEmpty() || start_index >= curr_size) {
+    size_t const curr_len = Length();
+    if(IsEmpty() || start_index >= curr_len) {
         return INVALID_STRING_INDEX;
     }
 
-    for(size_t i = start_index; i < curr_size; ++i) {
+    for(size_t i = start_index; i < curr_len; ++i) {
         if(__Container::operator[](i) != needle) {
             return i;
         }
@@ -103,14 +104,14 @@ String::FindFirstNotOf(char const needle, size_t start_index = 0) const
 }
 
 size_t 
-String::FindLastIndexOf(char const needle, size_t start_index = 0) const
+String::FindLastIndexOf(char const needle, size_t start_index /* = 0 */) const
 {
-    size_t const curr_size = Size();
-    if(IsEmpty() || start_index >= curr_size) {
+    size_t const curr_len = Length();
+    if(IsEmpty() || start_index >= curr_len) {
         return INVALID_STRING_INDEX;
     }
 
-    for(size_t i = curr_size -start_index -1; i >= 0; --i) {
+    for(size_t i = curr_len -start_index -1; i >= 0; --i) {
         if(__Container::operator[](i) == needle) {
             return i;
         }
@@ -120,14 +121,14 @@ String::FindLastIndexOf(char const needle, size_t start_index = 0) const
 }
 
 size_t 
-String::FindLastIndexNotOf(char const needle, size_t start_index = 0) const
+String::FindLastIndexNotOf(char const needle, size_t start_index /* = 0 */) const
 {
-    size_t const curr_size = Size();
-    if(IsEmpty() || start_index >= curr_size) {
+    size_t const curr_len = Length();
+    if(IsEmpty() || start_index >= curr_len) {
         return INVALID_STRING_INDEX;
     }
 
-    for(size_t i = curr_size -start_index -1; i >= 0; --i) {
+    for(size_t i = curr_len -start_index -1; i >= 0; --i) {
         if(__Container::operator[](i) != needle) {
             return i;
         }
