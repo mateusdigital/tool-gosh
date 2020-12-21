@@ -14,7 +14,27 @@ String Join(
     String const &c = ""
 );
 
-String Canonize(String const &path);
+// Only takes effect on Windows Platform, ignored on others.
+enum class CanonizeCaseOptions {
+    DoNotChange,
+    ChangeToLowerCase,
+    ChangeToUpperCase,
+}; // enum class CanonizeCaseOptions 
+
+// Only takes effect on Windows Platform, ignored on others.
+enum class CanonizeSlashOptions {
+    DoNotChange, 
+    ChangeToForwardSlashes, 
+    ChangeToBackwardSlashes
+}; // enum CanonizeSlashOptions 
+
+String Canonize(
+    String               const &path, 
+    CanonizeCaseOptions  const case_options  = CanonizeCaseOptions::DoNotChange,
+    CanonizeSlashOptions const slash_options = CanonizeSlashOptions::DoNotChange
+);
+
+
 String MakeRelative(String const &path, String const &to_what_path);
 
 
