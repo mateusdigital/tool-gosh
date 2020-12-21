@@ -12,8 +12,8 @@ private:
 
 public:
     void PushBack(Item_Type const &t) { __Container::push_back(t); }
+    void PopBack ()                   { __Container::pop_back ();  }
 
-    bool   IsEmpty() const { return __Container::empty();  }
     size_t Size   () const { return __Container::size(); }
 
 
