@@ -9,8 +9,9 @@
 namespace FileUtils {
 
 namespace ErrorCodes {
-    constexpr int FILE_NOT_FOUND   = 1;
-    constexpr int INVALID_FILENAME = 2;
+    constexpr int FILE_NOT_FOUND      = 1;
+    constexpr int FILE_ALREADY_EXISTS = 2;
+    constexpr int INVALID_FILENAME    = 2;
 };
 
 
