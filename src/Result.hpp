@@ -6,7 +6,8 @@
 
 struct Error
 {
-    static int const NO_ERROR = 0;
+    static int const UNKNOWN_ERROR = -1;
+    static int const NO_ERROR      = 0;
 
     int    error_code;
     String error_msg;
