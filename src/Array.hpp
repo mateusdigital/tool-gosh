@@ -14,7 +14,9 @@ public:
     void PushBack(Item_Type const &t) { __Container::push_back(t); }
     void PopBack ()                   { __Container::pop_back ();  }
 
-    size_t Size   () const { return __Container::size(); }
+
+    bool   IsEmpty() const { return __Container::empty(); }
+    size_t Count  () const { return __Container::size (); }
 
 
     __Container::iterator       begin() noexcept       { return __Container::begin(); }
