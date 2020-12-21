@@ -26,14 +26,19 @@ include_directories(
 set(SOURCE_FILES
     ./src/gosh.cpp
 
-    ./src/BasicTypes.hpp
     ./src/Array.hpp
+    ./src/BasicTypes.hpp
+    ./src/BuildInfo.hpp
+    ./src/CommandLine.hpp
     ./src/FileUtils.hpp
     ./src/FileUtils.cpp
+    ./src/Math.hpp
     ./src/OS.hpp
     ./src/PathUtils.hpp
+        ./src/Win32_PathUtils.cpp
     ./src/Result.hpp
     ./src/String.hpp
+    ./src/String.cpp
     ./src/Terminal.hpp
 
 )
