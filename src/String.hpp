@@ -1,8 +1,9 @@
 #pragma once
 
 //
-#include <string>
 #include <string.h>
+#include <ctype.h>
+#include <string>
 //
 #include "Array.hpp"
 
@@ -57,6 +58,15 @@ class String :
 private:
     typedef std::string __Container;
 
+public:
+    static String 
+    CreateWithCapacity(size_t capacity) 
+    {
+        String s;
+        s.Reserve(capacity);
+        return s;
+    }
+
 
 public:
     String(std::string const &right)
@@ -65,7 +75,7 @@ public:
         // Empty...
     }
 
-    String(char const * const right)
+    String(char const * const right = "")
         : std::string(right)
     {
         // Empty...
@@ -97,6 +107,10 @@ public:
 
 
 public:
+    void Reserve(size_t const capacity) { __Container::reserve(capacity); }
+
+
+public:
     bool StartsWith(String const &neddle) const;
     bool StartsWith(char   const  needle) const;
 
@@ -114,7 +128,8 @@ public:
 
 public:
     Array<String> Split(char const separator) const;
-
+    void PushBack(String const &rhs) { *this += rhs; }
+    void PushBack(char   const  rhs) { *this += rhs; }
 
 public:
     String 
@@ -122,7 +137,6 @@ public:
     {
         return substr(left_index, right_index - left_index);
     }
-
 
 
 public:
@@ -141,7 +155,7 @@ public:
     TrimRight(char const char_to_trim = ' ')
     {
         size_t right_index = FindLastIndexNotOf(char_to_trim);
-        if (!right_index == INVALID_STRING_INDEX) {
+        if (right_index == INVALID_STRING_INDEX) {
             return;
         }
         
@@ -154,5 +168,24 @@ public:
     {
         TrimLeft (char_to_trim); 
         TrimRight(char_to_trim);
+    }
+
+public:
+    void 
+    ToLower() 
+    {
+        size_t const len = Length();
+        for (size_t i = 0; i < len; ++i) {
+            __Container::operator[](i) = tolower(__Container::operator[](i));
+        }
+    }
+
+    void 
+    ToUpper() 
+    {
+        size_t const len = Length();
+        for (size_t i = 0; i < len; ++i) {
+            __Container::operator[](i) = toupper(__Container::operator[](i));
+        }
     }
 }; // class String
