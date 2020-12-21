@@ -87,10 +87,11 @@ struct Bookmark {
     std::string path;
 };
 
-struct Bookmarks {
-    int             count;
+struct Bookmarks 
+{
+    size_t          count;
     Array<Bookmark> list;
-};
+}; // struct Bookmarks
 
 static String
 GetBookmarksPath()
@@ -133,7 +134,7 @@ LoadBookmarks()
 
 
     Bookmarks bookmarks;
-    size_t const lines_count = read_result.value.Size();
+    size_t const lines_count = read_result.value.Count();
     for(size_t line_no = 0;
         line_no < lines_count;
         ++line_no)
@@ -149,7 +150,7 @@ LoadBookmarks()
         }
 
         Array<String> components = line.Split(BOOKMARK_SEPARATOR_CHAR);
-        if(components.Size() != 2) {
+        if(components.Count() != 2) {
             Die(
                 "Error parsing bookmarks!\n    Path: (%s)\n    Line: (%d)",
                 Terminal::Colored(Terminal::Color::Magenta, bookmarks_path),
@@ -236,8 +237,8 @@ ListBookmarks(ListOptions const options)
 
     // Find the longest bookmark name.
     // This will be used to make the bookmarks aligned.
-    int longest_name = 0;
-    for(int i = 0; i < bookmarks.count; ++i) {
+    size_t longest_name = 0;
+    for(size_t i = 0; i < bookmarks.count; ++i) {
         if(longest_name < bookmarks.list[i].name.size()) {
             longest_name = bookmarks.list[i].name.size();
         }
@@ -252,7 +253,7 @@ ListBookmarks(ListOptions const options)
         }
     );
 
-    for(int i = 0; i < bookmarks.count; ++i) {
+    for(size_t i = 0; i < bookmarks.count; ++i) {
         Bookmark const &bookmark = bookmarks.list[i];
         if(options == ListOptions::Short) {
             WriteOutput(Terminal::Colored(bookmark.name, Terminal::Color::Blue));
