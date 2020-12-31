@@ -40,6 +40,7 @@ set(SOURCE_FILES
     ./src/String.hpp
     ./src/String.cpp
     ./src/Terminal.hpp
+    ./src/Terminal.cpp
 
 )
 
