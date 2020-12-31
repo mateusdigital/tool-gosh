@@ -6,13 +6,16 @@
 #include "String.hpp"
 #include "Result.hpp"
 
-namespace FileUtils {
+namespace eaz { namespace FileUtils {
 
+//
+//
+//
 namespace ErrorCodes {
-    constexpr int FILE_NOT_FOUND      = 1;
-    constexpr int FILE_ALREADY_EXISTS = 2;
-    constexpr int INVALID_FILENAME    = 2;
-};
+    constexpr i32 FILE_NOT_FOUND      = 1;
+    constexpr i32 FILE_ALREADY_EXISTS = 2;
+    constexpr i32 INVALID_FILENAME    = 2;
+} // namespace ErrorCodes
 
 
 //
@@ -27,17 +30,17 @@ ReadAllLinesResult_t ReadAllLines(String const &path);
 //
 enum class WriteMode 
 {
-    Append, 
+    Append,
     Overwrite,
 };
 
 typedef Result<size_t> WriteResult_t;
 WriteResult_t WriteAllLines(
-    String        const &path, 
+    String        const &path,
     Array<String> const &lines,
-    String        const &new_line, 
+    String        const &new_line,
     WriteMode     const  write_mode);
 
 
-
-}; // namespace FileUtils.hpp
+} // namespace FileUtils
+} // namespace eaz
