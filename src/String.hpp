@@ -79,7 +79,33 @@ public:
         return s;
     }
 
+    static String
+    Join(Array<String> const &components, char const separator = ' ')
+    {
+        size_t size_to_reserve = 0;
+        for(size_t i = 0, count = components.Count(); i < count; ++i) {
+            size_to_reserve += components.Count() + 1; // Separator Size.
+        }
 
+        String s = String::CreateWithCapacity(size_to_reserve);
+        size_t offset = 0;
+        for(size_t i = 0, count = components.Count(); i < count; ++i) {
+            String const &component     = components[i];
+            size_t const  component_len = component.Length();
+
+            s.MemSet(offset, component.CStr(), component_len);
+            offset += component_len;
+
+            s[offset] = separator;
+            offset += 1;
+        }
+
+        return s;
+    }
+
+    //
+    // CTOR / DTOR
+    //
 public:
     String(std::string const &right)
         : std::string(right)
