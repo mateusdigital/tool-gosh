@@ -49,6 +49,16 @@ CStrIsNullEmptyOrWhitespace(char const * const str)
     return true;
 }
 
+EAZ_FORCE_INLINE void
+CStrMemCopy(
+    char         const *dst,
+    size_t       const offset,
+    char const * const src,
+    size_t       const src_size)
+{
+    memcpy(Cast<void*>(dst + offset), src, src_size);
+}
+
 //
 // String
 //
