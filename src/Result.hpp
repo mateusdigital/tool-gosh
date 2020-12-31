@@ -1,24 +1,31 @@
 #pragma once
 
 //
+#include "BasicTypes.hpp"
 #include "String.hpp"
 
 
+namespace eaz {
+
+//
+//
+//
 struct Error
 {
-    static int const UNKNOWN_ERROR = -1;
-    static int const NO_ERROR      = 0;
+    static i32 const UNKNOWN_ERROR = -1;
+    static i32 const NO_ERROR      =  0;
 
-    int    error_code;
+    i32    error_code;
     String error_msg;
 
-    Error(int error_code = NO_ERROR, String const &error_msg = "")
+    Error(i32 error_code = NO_ERROR, String const &error_msg = "")
         : error_code(error_code)
         , error_msg (error_msg)
     {
         // Empty...
     }
 };
+
 
 template <typename Value_Type, typename Error_Type = Error>
 class Result
@@ -51,3 +58,5 @@ private:
     bool       const _success;
     Error_Type const _error;
 }; // class Result
+
+} // namespace eaz
