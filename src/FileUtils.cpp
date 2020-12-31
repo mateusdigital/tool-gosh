@@ -5,6 +5,9 @@
 //
 #include "PathUtils.hpp"
 
+// Usings
+using namespace eaz;
+
 //
 // Read File
 //
