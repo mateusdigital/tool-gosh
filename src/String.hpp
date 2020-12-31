@@ -61,6 +61,8 @@ CStrMemCopy(
     memcpy(Cast<void*>(dst + offset), src, src_size);
 }
 
+
+
 //
 // String
 //
@@ -70,6 +72,9 @@ class String :
 private:
     typedef std::string __Container;
 
+    //
+    // Static Methods
+    //
 public:
     static String 
     CreateWithCapacity(size_t capacity) 
@@ -93,7 +98,7 @@ public:
             String const &component     = components[i];
             size_t const  component_len = component.Length();
 
-            s.MemSet(offset, component.CStr(), component_len);
+            s.MemCopy(offset, component.CStr(), component_len);
             offset += component_len;
 
             s[offset] = separator;
@@ -119,15 +124,32 @@ public:
         // Empty...
     }
 
+    explicit String(char const c)
+    {
+        __Container::push_back(c);
+    }
+
+    //
+    //
+    //
 public:
     char        const * CStr     () const { return this->c_str(); }
     std::string const & StdString() const { return *this;         }
 
+    //
+    //
+    //
 public:
-    static String Format(String const &fmt, ...);
+    static String
+    Format(String const &fmt, ...)
+    {
+        // @todo(stdmatt): Implement... - Dec 28, 2020
+        return fmt; 
+    }
 
-
-
+    //
+    //
+    //
 public:
     bool   IsEmpty() const { return __Container::empty(); }
     size_t Length () const { return __Container::size (); }
@@ -139,23 +161,39 @@ public:
             return true;
         }
 
-        size_t index = FindFirstNotOf(' ');
+        size_t const index = FindFirstNotOf(' ');
         return index == INVALID_STRING_INDEX;
     }
 
-
+    //
+    //
+    //
 public:
     void Reserve(size_t const capacity) { __Container::reserve(capacity); }
 
+    void
+    MemCopy(
+        size_t       const offset,
+        char const * const mem_to_copy,
+        size_t       const size_to_copy)
+    {
+        CStrMemCopy(CStr(), offset, mem_to_copy, size_to_copy);
+    }
 
+
+    //
+    //
+    //
 public:
-    bool StartsWith(String const &neddle) const;
+    bool StartsWith(String const &needle) const;
     bool StartsWith(char   const  needle) const;
 
-    bool EndsWith(String const &neddle) const;
+    bool EndsWith(String const &needle) const;
     bool EndsWith(char   const  needle) const;
 
-
+    //
+    //
+    //
 public:
     size_t FindIndexOf   (char const needle, size_t start_index = 0) const;
     size_t FindFirstNotOf(char const needle, size_t start_index = 0) const;
@@ -163,25 +201,35 @@ public:
     size_t FindLastIndexOf   (char const needle, size_t start_index = 0) const;
     size_t FindLastIndexNotOf(char const needle, size_t start_index = 0) const;
 
-
+    //
+    //
+    //
 public:
-    Array<String> Split(char const separator) const;
+    Array<String> Split(char        const  separator ) const;
+    Array<String> Split(Array<char> const &separators) const;
+
     void PushBack(String const &rhs) { *this += rhs; }
     void PushBack(char   const  rhs) { *this += rhs; }
 
+    //
+    //
+    //
 public:
     String 
     SubString(size_t const left_index, size_t const right_index) const
     {
-        return substr(left_index, right_index - left_index);
+        return __Container::substr(left_index, right_index - left_index);
     }
 
 
+    //
+    //
+    //
 public:
     void
     TrimLeft(char const char_to_trim = ' ')
     {
-        size_t left_index = FindFirstNotOf(char_to_trim);
+        size_t const left_index = FindFirstNotOf(char_to_trim);
         if (left_index == INVALID_STRING_INDEX) {
             return;
         }
@@ -192,7 +240,7 @@ public:
     void
     TrimRight(char const char_to_trim = ' ')
     {
-        size_t right_index = FindLastIndexNotOf(char_to_trim);
+        size_t const right_index = FindLastIndexNotOf(char_to_trim);
         if (right_index == INVALID_STRING_INDEX) {
             return;
         }
@@ -208,6 +256,9 @@ public:
         TrimRight(char_to_trim);
     }
 
+    //
+    //
+    //
 public:
     void 
     ToLower() 

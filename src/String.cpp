@@ -137,8 +137,6 @@ String::FindLastIndexNotOf(char const needle, size_t start_index /* = 0 */) cons
     return INVALID_STRING_INDEX;
 }
 
-
-
 Array<String>
 String::Split(char const separator) const
 {
@@ -147,11 +145,9 @@ String::Split(char const separator) const
         return splits;
     }
     
-    char const c = __Container::operator[](0);
-    
     size_t index = 0;
     while(true) {
-        size_t new_index = FindIndexOf(separator, index);
+        size_t const new_index = FindIndexOf(separator, index);
         if(new_index == INVALID_STRING_INDEX) {
             return splits;
         }
@@ -160,4 +156,11 @@ String::Split(char const separator) const
         splits.PushBack(new_string);
         index = (new_index + 1);
     }
+}
+
+Array<String>
+String::Split(Array<char> const &separators) const
+{
+    // @todo(stdmatt): Implement... Dec 31, 2020
+    return {};
 }
