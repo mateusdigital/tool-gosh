@@ -7,9 +7,12 @@
 // 
 #include "OS.hpp"
 #include "FileUtils.hpp"
-namespace Private {
-}
+// Usings
+using namespace eaz;
 
+namespace eaz { namespace Private {
+} // namespace Private
+} // namespace eaz
 
 
 String 
@@ -56,12 +59,10 @@ PathUtils::Canonize(
     Array<String> components;
     Array<char>   separators;
 
-    size_t left_index               = 0;
-    size_t right_index              = 0;
     size_t components_string_length = 0;
-
     size_t const path_length = path.length();
-    for (size_t left_index = 0, right_index = 0; 
+
+    for (size_t left_index = 0, right_index = 0;
         right_index < path_length; 
         ++right_index) 
     {
