@@ -6,6 +6,8 @@
 #include <string>
 //
 #include "Array.hpp"
+#include "CodeUtils.hpp"
+#include "Macros.hpp"
 
 //
 // Constants
@@ -17,7 +19,7 @@ constexpr size_t INVALID_STRING_INDEX = std::string::npos;
 //
 // C - String
 //
-inline size_t
+EAZ_FORCE_INLINE size_t
 CStrLen(const char * const str)
 {
     if(!str) {
@@ -26,13 +28,13 @@ CStrLen(const char * const str)
     return strlen(str);
 }
 
-inline bool
+EAZ_FORCE_INLINE bool
 CStrEquals(const char * const lhs, char const * const rhs)
 {
     return strcmp(lhs, rhs) == 0;
 }
 
-inline bool
+EAZ_FORCE_INLINE bool
 CStrIsNullEmptyOrWhitespace(char const * const str)
 {
     if(!str) {
