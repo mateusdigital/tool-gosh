@@ -17,6 +17,15 @@ private:
     typedef std::vector<Item_Type> __Container;
 
 public:
+    static Array<Item_Type>
+    CreateWithCapacity(size_t const capacity)
+    {
+        Array<Item_Type> s;
+        s.Reserve(capacity);
+        return s;
+    }
+
+public:
     Array() = default;
 
     Array(std::initializer_list<Item_Type> const &init_list)
@@ -47,6 +56,9 @@ public:
 
     Item_Type       & Back()       { return __Container::back(); }
     Item_Type const & Back() const { return __Container::back(); }
+
+    Item_Type       & Front()       { return __Container::front(); }
+    Item_Type const & Front() const { return __Container::front(); }
 
     __Container::iterator       begin() noexcept       { return __Container::begin(); }
     __Container::const_iterator begin() const noexcept { return __Container::begin(); }
