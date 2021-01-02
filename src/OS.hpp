@@ -13,10 +13,10 @@ ARK_FORCE_INLINE String NewLineString      () { return "\n"; }
 
 // @todo(stdmatt): Make it for GNU and macOS - Dec 20, 2020
 ARK_FORCE_INLINE String PathSeparatorString         () { return "/"; }
-ARK_FORCE_INLINE String PathAlternateSeparatorString() { return "/"; }
+ARK_FORCE_INLINE String PathAlternateSeparatorString() { return "\\"; }
 
 ARK_FORCE_INLINE char   PathSeparatorChar           () { return '/'; }
-ARK_FORCE_INLINE char   PathAlternateSeparatorChar  () { return '/'; }
+ARK_FORCE_INLINE char   PathAlternateSeparatorChar  () { return '\\'; }
 
 ARK_FORCE_INLINE String PathCurrentDirectoryString() { return ".";  }
 ARK_FORCE_INLINE String PathParentDirectoryString () { return ".."; }
