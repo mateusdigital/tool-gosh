@@ -24,42 +24,74 @@ constexpr auto ACTION_UPDATE_STR    = "gosh_opt_update";
 constexpr auto ACTION_PRINT_STR     = "gosh_opt_print";
 constexpr auto ACTION_EXISTS_STR    = "gosh_opt_exists_bookmark";
 
-constexpr auto GOSH_INSTALL_PATH = ".stdmatt/gosh";
+constexpr auto GOSH_INSTALL_PATH       = ".stdmatt/gosh";
+constexpr auto GOSH_BOOKMARKS_FILENAME = "bookmarks.txt";
 
 constexpr auto BOOKMARK_COMMENT_CHAR   = '#';
 constexpr auto BOOKMARK_SEPARATOR_CHAR = ':';
 
+#include "fmt/core.h"
 
 template <typename ...Args> 
-static void 
+ark_internal_function void
 WriteOutput(String const &fmt, Args... args)
 {
-
+    fmt::print(fmt.CStr(), args...);
 }
 
 
 //
 // Macros
 //
-#define Die(_fmt_, ...) do { } while(0)
-
-
-static char const * const
-SafeGetArg(int argc, char const *argv[], int index)
+template <typename ...Args>
+ark_internal_function void
+Die(String const &fmt, Args ...args)
 {
-    if (index > (argc-1)) {
-        return nullptr;
-    }
-    return argv[1];
+    String const formatted = String::Format(fmt, args...);
+    WriteOutput("[FATAL] {}\n", formatted);
+    exit(1);
 }
 
-static void
-ShowHelp(u32 code)
+ark_internal_function void
+ShowHelp(u32 const code)
 {
-
+    printf("%s\n",
+"Usage:\n"
+"    gosh                        (Same as gosh -l)\n"
+"    gosh <name>                 (To change the directory)\n"
+"    gosh -h | -v                (Show help | version)\n"
+"    gosh -l | -L                (Show list of bookmarks)\n"
+"    gosh -p <name>              (Show path for bookmark)\n"
+"    gosh -e <path>              (Show bookmark for path)\n"
+"    gosh -a | -u <name> <path>  (Add | Update bookmark)\n"
+"    gosh -r <name>              (Remove the bookmark)\n"
+"    \n"
+"Options:\n"
+"    *-h --help     : Show this screen.\n"
+"    *-v --version  : Show app version and copyright.\n"
+"    \n"
+"    *-e --exists <path>  : Print the Bookmark for path.\n"
+"    *-p --print  <name>  : Print the path of Bookmark.\n"
+"    \n"
+"    *-l --list       : Show all Bookmarks (no Paths).\n"
+"    *-L --list-long  : Show all Bookmarks and Paths.\n"
+"    \n"
+"    *-a --add    <name> <path>  : Add a Bookmark with specified path.\n"
+"    *-r --remove <name>         : Remove a Bookmark.\n"
+"    *-u --update <name> <path>  : Update a Bookmark to path.\n"
+"    \n"
+"    -n --no-colors : Print the output without colors.\n"
+"    \n"
+"Notes:\n"
+"    If <path> is blank the current dir is assumed.\n"
+"    \n"
+"    Options marked with * are exclusive, i.e. the gosh will run that\n"
+"    and exit after the operation.\n"
+);
+    exit(code);
 }
 
-static void
+ark_internal_function void
 ShowVersion(u32 code)
 {
 
@@ -77,23 +109,27 @@ struct Bookmark {
 
 struct Bookmarks 
 {
-    size_t          count;
-    Array<Bookmark> list;
+    Array<Bookmark> items;
 }; // struct Bookmarks
 
-static String
+ark_internal_function String
 GetBookmarksPath()
 {
     String const &user_home = PathUtils::GetUserHome();
-    String const full_path = PathUtils::Join(user_home, GOSH_INSTALL_PATH);
-
+    String const full_path = PathUtils::Join(
+        user_home,
+        GOSH_INSTALL_PATH,
+        GOSH_BOOKMARKS_FILENAME
+    );
     return full_path;
 }
 
-static Bookmarks
+ark_internal_function Bookmarks
 LoadBookmarks()
 {
     String const bookmarks_path = GetBookmarksPath();
+    printf("%s\n", bookmarks_path.CStr());
+    fflush(stdout);
     if (!PathUtils::IsFile(bookmarks_path)) {
         PathUtils::CreateDirResult_t const create_dir_result = PathUtils::CreateDir(
             PathUtils::Dirname(bookmarks_path),
@@ -141,12 +177,12 @@ LoadBookmarks()
         if (components.Count() != 2) {
             Die(
                 "Error parsing bookmarks!\n    Path: (%s)\n    Line: (%d)",
-                Terminal::Colored(Terminal::Color::Magenta, bookmarks_path),
-                Terminal::Colored(Terminal::Color::Blue   , line_no)
+                Terminal::Colored(bookmarks_path, Terminal::Color::Magenta),
+                Terminal::Colored(line_no,        Terminal::Color::Blue)
             );
         }
 
-        bookmarks.list.PushBack({
+        bookmarks.items.PushBack({
             components[0],
             components[1]
         });
@@ -155,11 +191,11 @@ LoadBookmarks()
     return bookmarks;
 }
 
-static void
+ark_internal_function void
 SaveBookmarks(Bookmarks const &bookmarks)
 {
     Array<String> lines;
-    for(Bookmark const &bookmark : bookmarks.list) {
+    for(Bookmark const &bookmark : bookmarks.items) {
         String const line = String::Format(
             "%s %c %s",
             bookmark.name,
@@ -171,7 +207,7 @@ SaveBookmarks(Bookmarks const &bookmarks)
     }
 
     String const bookmarks_path = GetBookmarksPath();
-    FileUtils::WriteResult_t write_result = FileUtils::WriteAllLines(
+    FileUtils::WriteResult_t const write_result = FileUtils::WriteAllLines(
         bookmarks_path,
         lines,
         OS::NewLineString(),
@@ -181,31 +217,33 @@ SaveBookmarks(Bookmarks const &bookmarks)
     if (write_result.HasFailed()) {
         Die(
             "Error writting bookmarks!\n    Path: (%s)\n    Error: (%d)",
-            Terminal::Colored(Terminal::Color::Magenta, bookmarks_path),
-            Terminal::Colored(Terminal::Color::Blue   , Cast<int>(write_result.value))
+            Terminal::Colored(bookmarks_path,     Terminal::Color::Magenta),
+            Terminal::Colored(write_result.value, Terminal::Color::Blue)
         );
     }
 }
 
 
-enum class EnsureBoorkmarkOptions {
+enum class EnsureBookmarkOptions {
     MustExist, 
     MustNotExist
 };
 
-static void 
-EnsureBookmark(String const &clean_name, EnsureBoorkmarkOptions const options)
+ark_internal_function void
+EnsureBookmark(String const &clean_name, EnsureBookmarkOptions const options)
 {
 
 }
 
-static void 
+ark_internal_function void
 EnsureValidPath(String const &path)
 {
     if (!PathUtils::IsDir(path)) {
-        Die("Invalid Path: (%s)", Terminal::Colored(Terminal::Color::Magenta, path));
+        Die("Invalid Path: (%s)", Terminal::Colored(path, Terminal::Color::Magenta));
     }
 }
+
+
 //
 // Bookmark Actions
 //
@@ -214,11 +252,11 @@ enum class ListOptions {
     Long
 };
 
-static void
+ark_internal_function void
 ListBookmarks(ListOptions const options)
 {
     Bookmarks bookmarks = LoadBookmarks();
-    if (bookmarks.count == 0) {
+    if (bookmarks.items.Count() == 0) {
         WriteOutput("No bookmarks yet... :/");
         return;
     }
@@ -226,23 +264,23 @@ ListBookmarks(ListOptions const options)
     // Find the longest bookmark name.
     // This will be used to make the bookmarks aligned.
     size_t longest_name = 0;
-    for(size_t i = 0; i < bookmarks.count; ++i) {
-        if (longest_name < bookmarks.list[i].name.size()) {
-            longest_name = bookmarks.list[i].name.size();
+    for(size_t i = 0; i < bookmarks.items.Count(); ++i) {
+        if (longest_name < bookmarks.items[i].name.size()) {
+            longest_name = bookmarks.items[i].name.size();
         }
     }
 
     // Display output alphabetcally...
     std::sort(
-        std::begin(bookmarks.list),
-        std::end  (bookmarks.list),
+        std::begin(bookmarks.items),
+        std::end  (bookmarks.items),
         [](Bookmark const &lhs, Bookmark const &rhs) {
             return lhs.name < rhs.name;
         }
     );
 
-    for(size_t i = 0; i < bookmarks.count; ++i) {
-        Bookmark const &bookmark = bookmarks.list[i];
+    for(size_t i = 0; i < bookmarks.items.Count(); ++i) {
+        Bookmark const &bookmark = bookmarks.items[i];
         if (options == ListOptions::Short) {
             WriteOutput(Terminal::Colored(bookmark.name, Terminal::Color::Blue));
             continue;
@@ -259,17 +297,17 @@ ListBookmarks(ListOptions const options)
 
 }
 
-static void
-AddBookmark(char const * const name, char const * const path)
+ark_internal_function void
+AddBookmark(String const &name, String const &path)
 {
     String clean_name = name;
     String clean_path = path;
 
-    if (CStrIsNullEmptyOrWhitespace(path)) {
+    if (path.IsEmptyOrWhitespace()) {
         clean_path = ".";
     }
 
-    if (CStrIsNullEmptyOrWhitespace(name)) {
+    if (name.IsEmptyOrWhitespace()) {
         // This makes the name of the bookmark to be the same
         // as the last part of the path
         clean_name = PathUtils::Basename(PathUtils::Canonize("."));
@@ -277,14 +315,14 @@ AddBookmark(char const * const name, char const * const path)
 
 
     clean_name.Trim();
-    EnsureBookmark(clean_name, EnsureBoorkmarkOptions::MustExist);
+    EnsureBookmark(clean_name, EnsureBookmarkOptions::MustExist);
 
-    String added_path = PathUtils::MakeRelative(clean_name, PathUtils::GetUserHome());
+    String const added_path = PathUtils::MakeRelative(clean_name, PathUtils::GetUserHome());
     EnsureValidPath(added_path);
 
 
     Bookmarks bookmarks = LoadBookmarks();
-    bookmarks.list.push_back({clean_name, added_path});
+    bookmarks.items.push_back({clean_name, added_path});
     SaveBookmarks(bookmarks);
 
     WriteOutput(
@@ -294,26 +332,26 @@ AddBookmark(char const * const name, char const * const path)
     );
 }
 
-static void
-RemoveBookmark(char const * const name)
+ark_internal_function void
+RemoveBookmark(String const &name)
 {
 
 }
 
-static void
-UpdateBookmark(char const * const name, char const * const path)
+ark_internal_function void
+UpdateBookmark(String const &name, String const &path)
 {
 
 }
 
-static void
-DoesBookmarkExists(char const * const name)
+ark_internal_function void
+DoesBookmarkExists(String const &name)
 {
 
 }
 
-static void
-PrintBookmark(char const * const name)
+ark_internal_function void
+PrintBookmark(String const &name)
 {
 
 }
@@ -328,85 +366,118 @@ int
 main(int argc, char const *argv[])
 {
     using namespace ark;
-
-    //CommandLine::Set(argc, argv);
-    CommandLine::Set("gosh --help");
+    CommandLine::Set(argc, argv);
+    CommandLine::Set("gosh -e");
     CommandLine::Parser cmd_parser;
-    
-    CommandLine::Argument const &help_arg = cmd_parser.CreateArgument(
+    //
+    // Help / Version
+    //
+    cmd_parser.CreateArgument(
         "h",
         "help",
         "Display this screen",
+        CommandLine::Argument::RequiresNoValues,
         EAZ_ARG_FOUND_FUNC({
             ShowHelp(EXIT_SUCCESS);
         })
     );
-    CommandLine::Argument const &version_arg = cmd_parser.CreateArgument(
+    cmd_parser.CreateArgument(
         "v",
         "version",
         "Show version and copyright info",
+        CommandLine::Argument::RequiresNoValues,
         EAZ_ARG_FOUND_FUNC({
             ShowVersion(EXIT_SUCCESS);
         })
     );
 
-    cmd_parser.Evaluate();
-
-    
-    if (argc < 2) {
-        ShowHelp(EXIT_FAILURE);
-    }
-
-    char const * const first_arg  = SafeGetArg(argc, argv, 0);
-    char const * const second_arg = SafeGetArg(argc, argv, 1);
-    char const * const third_arg  = SafeGetArg(argc, argv, 2);
-
-    //
-    // Help / Version
-    //
-    if (CStrEquals(ACTION_HELP_STR, first_arg)) {
-        ShowHelp(EXIT_SUCCESS);
-    }
-    else if (CStrEquals(ACTION_VERSION_STR, first_arg)) {
-        ShowVersion(EXIT_SUCCESS);
-    }
     //
     // List
     //
-    else if (CStrEquals(ACTION_LIST_STR, first_arg)) {
-        ListBookmarks(ListOptions::Short);
+    cmd_parser.CreateArgument(
+        "l",
+        String::Empty(),
+        "List the bookmarks - Short.",
+        CommandLine::Argument::RequiresNoValues,
+        EAZ_ARG_FOUND_FUNC({
+            ListBookmarks(ListOptions::Short);
+        })
+    );
+    cmd_parser.CreateArgument(
+        "L",
+        String::Empty(),
+        "List the bookmarks - Long.",
+        CommandLine::Argument::RequiresNoValues,
+        EAZ_ARG_FOUND_FUNC({
+            ListBookmarks(ListOptions::Long);
+        })
+    );
+
+    //
+    // Add / Remove / Update
+    //
+    CommandLine::Argument const &add_arg = cmd_parser.CreateArgument(
+        "a",
+        "add",
+        "Add a new bookmark.",
+        CommandLine::Argument::MinMax_t(2, 2)
+    );
+
+    CommandLine::Argument const &remove_arg = cmd_parser.CreateArgument(
+        "r",
+        "rm",
+        "Delete a bookmark bookmark.",
+        CommandLine::Argument::MinMax_t(1, 1)
+    );
+
+    CommandLine::Argument const update_arg = cmd_parser.CreateArgument(
+        "u",
+        "update",
+        "Update a new bookmark.",
+        CommandLine::Argument::MinMax_t(2, 2)
+    );
+    //
+    // Update / Print
+    //
+    CommandLine::Argument const exists_arg = cmd_parser.CreateArgument(
+        "e",
+        "exists",
+        "Check if bookmark exists",
+        CommandLine::Argument::MinMax_t(1, 1)
+    );
+
+    CommandLine::Argument const print_arg = cmd_parser.CreateArgument(
+        "p",
+        "print",
+        "Print bookmark's path",
+        CommandLine::Argument::MinMax_t(1, 1)
+    );
+
+    CommandLine::Parser::ParseResult_t result = cmd_parser.Evaluate();
+    if(result.HasFailed()) {
+        Die("{}", result.GetError().error_msg);
     }
-    else if (CStrEquals(ACTION_LIST_LONG_STR, first_arg)) {
-        ListBookmarks(ListOptions::Long);
+
+    //
+    // Add / Remove / Update
+    //
+    if(add_arg.HasValues()) {
+        AddBookmark(add_arg.GetValues().Front(), add_arg.GetValues().Back());
     }
-    //
-    // Add
-    //
-    else if (CStrEquals(ACTION_ADD_STR, first_arg)) {
-        AddBookmark(second_arg, third_arg);
+    if(remove_arg.HasValues()) {
+        RemoveBookmark(remove_arg.GetValues().Front());
     }
-    //
-    // Remove
-    //
-    else if (CStrEquals(ACTION_REMOVE_STR, first_arg)) {
-        RemoveBookmark(second_arg);
+    if(update_arg.HasValues()) {
+        UpdateBookmark(update_arg.GetValues().Front(), update_arg.GetValues().Back());
     }
+
     //
-    // Update
+    // Exists / Print
     //
-    else if (CStrEquals(ACTION_UPDATE_STR, first_arg)) {
-        UpdateBookmark(second_arg, third_arg);
+    if(exists_arg.HasValues()) {
+        DoesBookmarkExists(exists_arg.GetValues().Front());
     }
-    //
-    // Exists
-    //
-    else if (CStrEquals(ACTION_EXISTS_STR, first_arg)) {
-        DoesBookmarkExists(second_arg);
-    }
-    //
-    // Print
-    //
-    else if (CStrEquals(ACTION_PRINT_STR, first_arg)) {
-        PrintBookmark(second_arg);
+    if(print_arg.HasValues()) {
+        PrintBookmark(print_arg.GetValues().Front());
     }
 }
