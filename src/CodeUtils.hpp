@@ -3,6 +3,8 @@
 template <typename To_Type, typename From_Type>
 To_Type Cast(From_Type value) { return (To_Type)(value); }
 
+#define ark_local_persist     static
+#define ark_internal_function static
 
 //----------------------------------------------------------------------------//
 // Disallow                                                                   //
