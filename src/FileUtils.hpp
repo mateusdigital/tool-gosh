@@ -14,7 +14,8 @@ namespace ark { namespace FileUtils {
 namespace ErrorCodes {
     constexpr i32 FILE_NOT_FOUND      = 1;
     constexpr i32 FILE_ALREADY_EXISTS = 2;
-    constexpr i32 INVALID_FILENAME    = 2;
+    constexpr i32 INVALID_FILENAME    = 3;
+    constexpr i32 INVALID_PATH        = 4;
 } // namespace ErrorCodes
 
 
