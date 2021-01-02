@@ -32,8 +32,8 @@ enum class CanonizeSlashOptions {
 
 String Canonize(
     String               const &path,
-    CanonizeCaseOptions  const case_options  = CanonizeCaseOptions::DoNotChange,
-    CanonizeSlashOptions const slash_options = CanonizeSlashOptions::DoNotChange
+    CanonizeCaseOptions  const case_options  = CanonizeCaseOptions ::DoNotChange,
+    CanonizeSlashOptions const slash_options = CanonizeSlashOptions::ChangeToForwardSlashes
 );
 
 
