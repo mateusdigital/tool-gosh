@@ -22,7 +22,7 @@ FileUtils::ReadAllLines(String const &path)
     std::ifstream file(path.CStr());
 
     Array<String> lines; // @todo(stdmatt): Try to preallocate some memory... 20, Dec 2020.
-    while(true) {
+    while(!file.eof()) {
         std::string s;
         std::getline(file, s);
         lines.PushBack(s);
