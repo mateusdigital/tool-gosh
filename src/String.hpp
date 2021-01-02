@@ -78,6 +78,12 @@ private:
     // Static Methods
     //
 public:
+    static String const&
+    Empty()
+    {
+        ark_local_persist String s;
+        return s;
+    }
     static String 
     CreateWithCapacity(size_t capacity) 
     {
