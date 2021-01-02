@@ -1,5 +1,6 @@
 // Header
 #include "String.hpp"
+#include "Math.hpp"
 
 // Usings
 using namespace ark;
@@ -165,6 +166,32 @@ String::Split(char const separator) const
 Array<String>
 String::Split(Array<char> const &separators) const
 {
-    // @todo(stdmatt): Implement... Dec 31, 2020
+    Array<String> splits;
+
+    size_t index                  = 0;
+    size_t const separators_count = separators.Count();
+    size_t const this_len         = this->Length();
+
+    while(true) {
+        bool has_separator = false;
+        size_t new_index   = INVALID_STRING_INDEX;
+        for(size_t sep_i = 0; sep_i < separators_count; ++sep_i) {
+            char const curr_separator = separators[sep_i];
+            new_index = Math::Min(new_index, FindIndexOf(curr_separator, index));
+            if(new_index != INVALID_STRING_INDEX) {
+                has_separator = true;
+            }
+        }
+
+        String const new_string = SubString(index, new_index);
+        splits.PushBack(new_string);
+
+        if(!has_separator) {
+            return splits;
+        }
+
+        index = (new_index + 1);
+    }
+
     return {};
 }
