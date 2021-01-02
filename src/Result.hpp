@@ -18,7 +18,7 @@ struct Error
     i32    error_code;
     String error_msg;
 
-    Error(i32 error_code = NO_ERROR, String const &error_msg = "")
+    Error(i32 error_code = NO_ERROR, String const &error_msg = String::Empty())
         : error_code(error_code)
         , error_msg (error_msg)
     {
