@@ -3,6 +3,7 @@
 #include "BasicTypes.hpp"
 
 
+namespace ark {
 namespace BuildInfo {
 
 //
@@ -19,4 +20,5 @@ size_t             VersionBaby  ();
 bool               IsAssertEnabled();
 
 
-}; // namespace BuildInfo
+} // namespace BuildInfo
+} // namespace ark

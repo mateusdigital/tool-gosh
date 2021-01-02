@@ -1,10 +1,11 @@
-//
+#pragma once
+
+// Arkadia
 #include "Result.hpp"
 #include "String.hpp"
 
 
-namespace eaz {
-namespace PathUtils {
+namespace ark { namespace PathUtils {
 
 String GetUserHome();
 
@@ -63,4 +64,4 @@ typedef Result<bool> CreateFileResult_t;
 CreateFileResult_t CreateFile(String const &filename, CreateFileOptions const options);
 
 } // namespace PathUtils
-} // namespace eaz
+} // namespace ark

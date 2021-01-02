@@ -6,7 +6,7 @@
 #include "PathUtils.hpp"
 
 // Usings
-using namespace eaz;
+using namespace ark;
 
 //
 // Read File

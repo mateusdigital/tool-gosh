@@ -1,12 +1,13 @@
 // Header
 #include "Terminal.hpp"
 
-namespace Terminal { namespace Private {
+// Usings
+using namespace ark;
 
-    OutputMode _curr_output_mode = OutputMode::OnlyIfTerminal;
-
+namespace Private {
+    Terminal::OutputMode _curr_output_mode = Terminal::OutputMode::OnlyIfTerminal;
 } // namespace Private
-} // namespace Terminal
+
 
 //
 //

@@ -5,14 +5,14 @@
 #include "String.hpp"
 
 
-namespace Terminal {
+namespace ark { namespace Terminal {
 
 //
 //
 //
 enum class OutputMode {
-    Always, 
-    Never, 
+    Always,
+    Never,
     OnlyIfTerminal
 }; // enum OutputMode
 
@@ -69,4 +69,5 @@ String Colored(
     Attributes const attr     = Attributes::Empty);
 
 
-}; // namespace Terminal
+} // namespace Terminal
+} // namespace ark

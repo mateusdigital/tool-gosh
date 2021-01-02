@@ -6,7 +6,7 @@
 #include "String.hpp"
 #include "Result.hpp"
 
-namespace eaz { namespace FileUtils {
+namespace ark { namespace FileUtils {
 
 //
 //
@@ -43,4 +43,4 @@ WriteResult_t WriteAllLines(
 
 
 } // namespace FileUtils
-} // namespace eaz
+} // namespace ark

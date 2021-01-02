@@ -1,6 +1,9 @@
 // Header
 #include "String.hpp"
 
+// Usings
+using namespace ark;
+
 bool 
 String::StartsWith(String const &needle) const
 {
@@ -147,13 +150,14 @@ String::Split(char const separator) const
     
     size_t index = 0;
     while(true) {
-        size_t const new_index = FindIndexOf(separator, index);
+        size_t const new_index  = FindIndexOf(separator, index);
+        String const new_string = SubString(index, new_index);
+        splits.PushBack(new_string);
+
         if(new_index == INVALID_STRING_INDEX) {
             return splits;
         }
 
-        String const new_string = SubString(index, new_index);
-        splits.PushBack(new_string);
         index = (new_index + 1);
     }
 }

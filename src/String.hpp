@@ -1,13 +1,15 @@
 #pragma once
 
-//
+// std
 #include <string.h>
 #include <ctype.h>
 #include <string>
-//
+// Arkadia
 #include "Array.hpp"
 #include "CodeUtils.hpp"
 #include "Macros.hpp"
+
+namespace ark {
 
 //
 // Constants
@@ -19,7 +21,7 @@ constexpr size_t INVALID_STRING_INDEX = std::string::npos;
 //
 // C - String
 //
-EAZ_FORCE_INLINE size_t
+ARK_FORCE_INLINE size_t
 CStrLen(const char * const str)
 {
     if(!str) {
@@ -28,13 +30,13 @@ CStrLen(const char * const str)
     return strlen(str);
 }
 
-EAZ_FORCE_INLINE bool
+ARK_FORCE_INLINE bool
 CStrEquals(const char * const lhs, char const * const rhs)
 {
     return strcmp(lhs, rhs) == 0;
 }
 
-EAZ_FORCE_INLINE bool
+ARK_FORCE_INLINE bool
 CStrIsNullEmptyOrWhitespace(char const * const str)
 {
     if(!str) {
@@ -51,7 +53,7 @@ CStrIsNullEmptyOrWhitespace(char const * const str)
     return true;
 }
 
-EAZ_FORCE_INLINE void
+ARK_FORCE_INLINE void
 CStrMemCopy(
     char         const *dst,
     size_t       const offset,
@@ -278,3 +280,5 @@ public:
         }
     }
 }; // class String
+
+} // namespace ark

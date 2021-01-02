@@ -1,7 +1,7 @@
 // Header
 #include "CommandLine.hpp"
 
-namespace eaz {
+namespace ark {
 
 namespace Private {
     Array<String> s_CommandLineComponents;
@@ -239,4 +239,4 @@ CommandLine::Parser::SplitLongFlag(String const &item) const
 }
 
 
-} // namespace eaz
+} // namespace ark

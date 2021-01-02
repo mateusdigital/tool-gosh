@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <algorithm>
-#include <iterator>
-
+// Arkadia
 #include "BasicTypes.hpp"
 #include "CommandLine.hpp"
 #include "Array.hpp"
@@ -15,7 +9,7 @@
 #include "PathUtils.hpp"
 #include "Terminal.hpp"
 
-using namespace eaz;
+using namespace ark;
 
 //
 // Constants
@@ -60,19 +54,13 @@ SafeGetArg(int argc, char const *argv[], int index)
 }
 
 static void
-Exit(int code)
-{
-    exit(code);
-}
-
-static void
-ShowHelp()
+ShowHelp(u32 code)
 {
 
 }
 
 static void
-ShowVersion()
+ShowVersion(u32 code)
 {
 
 }
@@ -107,7 +95,7 @@ LoadBookmarks()
 {
     String const bookmarks_path = GetBookmarksPath();
     if (!PathUtils::IsFile(bookmarks_path)) {
-        PathUtils::CreateDirResult_t create_dir_result = PathUtils::CreateDir(
+        PathUtils::CreateDirResult_t const create_dir_result = PathUtils::CreateDir(
             PathUtils::Dirname(bookmarks_path),
             PathUtils::CreateDirOptions::Recursive
         );
@@ -339,9 +327,10 @@ PrintBookmark(char const * const name)
 int
 main(int argc, char const *argv[])
 {
-    using namespace eaz;
+    using namespace ark;
 
-    CommandLine::Set(argc, argv);
+    //CommandLine::Set(argc, argv);
+    CommandLine::Set("gosh --help");
     CommandLine::Parser cmd_parser;
     
     CommandLine::Argument const &help_arg = cmd_parser.CreateArgument(
@@ -349,7 +338,7 @@ main(int argc, char const *argv[])
         "help",
         "Display this screen",
         EAZ_ARG_FOUND_FUNC({
-            ShowHelp();
+            ShowHelp(EXIT_SUCCESS);
         })
     );
     CommandLine::Argument const &version_arg = cmd_parser.CreateArgument(
@@ -357,7 +346,7 @@ main(int argc, char const *argv[])
         "version",
         "Show version and copyright info",
         EAZ_ARG_FOUND_FUNC({
-            ShowVersion();
+            ShowVersion(EXIT_SUCCESS);
         })
     );
 
@@ -365,8 +354,7 @@ main(int argc, char const *argv[])
 
     
     if (argc < 2) {
-        ShowHelp();
-        Exit(1);
+        ShowHelp(EXIT_FAILURE);
     }
 
     char const * const first_arg  = SafeGetArg(argc, argv, 0);
@@ -377,57 +365,48 @@ main(int argc, char const *argv[])
     // Help / Version
     //
     if (CStrEquals(ACTION_HELP_STR, first_arg)) {
-        ShowHelp();
-        Exit(0);
+        ShowHelp(EXIT_SUCCESS);
     }
     else if (CStrEquals(ACTION_VERSION_STR, first_arg)) {
-        ShowVersion();
-        Exit(0);
+        ShowVersion(EXIT_SUCCESS);
     }
     //
     // List
     //
     else if (CStrEquals(ACTION_LIST_STR, first_arg)) {
         ListBookmarks(ListOptions::Short);
-        Exit(0);
     }
     else if (CStrEquals(ACTION_LIST_LONG_STR, first_arg)) {
         ListBookmarks(ListOptions::Long);
-        Exit(0);
     }
     //
     // Add
     //
     else if (CStrEquals(ACTION_ADD_STR, first_arg)) {
         AddBookmark(second_arg, third_arg);
-        Exit(0);
     }
     //
     // Remove
     //
     else if (CStrEquals(ACTION_REMOVE_STR, first_arg)) {
         RemoveBookmark(second_arg);
-        Exit(0);
     }
     //
     // Update
     //
     else if (CStrEquals(ACTION_UPDATE_STR, first_arg)) {
         UpdateBookmark(second_arg, third_arg);
-        Exit(0);
     }
     //
     // Exists
     //
     else if (CStrEquals(ACTION_EXISTS_STR, first_arg)) {
         DoesBookmarkExists(second_arg);
-        Exit(0);
     }
     //
     // Print
     //
     else if (CStrEquals(ACTION_PRINT_STR, first_arg)) {
         PrintBookmark(second_arg);
-        Exit(0);
     }
 }

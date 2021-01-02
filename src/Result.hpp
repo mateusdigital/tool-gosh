@@ -1,11 +1,11 @@
 #pragma once
 
-//
+// Arkadia
 #include "BasicTypes.hpp"
 #include "String.hpp"
 
 
-namespace eaz {
+namespace ark {
 
 //
 //
@@ -59,4 +59,4 @@ private:
     Error_Type const _error;
 }; // class Result
 
-} // namespace eaz
+} // namespace ark

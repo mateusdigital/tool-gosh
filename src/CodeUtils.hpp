@@ -12,55 +12,55 @@ To_Type Cast(From_Type value) { return (To_Type)(value); }
 //
 ///-----------------------------------------------------------------------------
 /// @brief Makes the constructor deleted.
-#define EAZ_DISALLOW_CTOR(_type_)  _type_() = delete;
+#define ARK_DISALLOW_CTOR(_type_)  _type_() = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes the destructor deleted.
-#define EAZ_DISALLOW_DTOR(_type_) ~_type_() = delete;
+#define ARK_DISALLOW_DTOR(_type_) ~_type_() = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes both the constructor and destructor deleted.
-#define EAZ_DISALLOW_CTOR_DTOR(_type_) \
-    EAZ_DISALLOW_CTOR(_type_)          \
-    EAZ_DISALLOW_DTOR(_type_)
+#define ARK_DISALLOW_CTOR_DTOR(_type_) \
+    ARK_DISALLOW_CTOR(_type_)          \
+    ARK_DISALLOW_DTOR(_type_)
 
 //
 // Copy
 //
 ///-----------------------------------------------------------------------------
 /// @brief Makes the copy-constructor deleted.
-#define EAZ_DISALLOW_COPY_CTOR(_type_) \
+#define ARK_DISALLOW_COPY_CTOR(_type_) \
     _type_(const _type_ &) = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes the copy-assign operator deleted.
-#define EAZ_DISALLOW_COPY_ASSIGN(_type_) \
+#define ARK_DISALLOW_COPY_ASSIGN(_type_) \
     _type_& operator=(const _type_&) = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes both the copy-constructor and copy-assign operator deleted.
-#define EAZ_DISALLOW_COPY_CTOR_AND_COPY_ASSIGN(_type_) \
-    EAZ_DISALLOW_COPY_CTOR(_type_)                     \
-    EAZ_DISALLOW_COPY_ASSIGN(_type_)
+#define ARK_DISALLOW_COPY_CTOR_AND_COPY_ASSIGN(_type_) \
+    ARK_DISALLOW_COPY_CTOR(_type_)                     \
+    ARK_DISALLOW_COPY_ASSIGN(_type_)
 
 //
 // Move
 //
 ///-----------------------------------------------------------------------------
 /// @brief Makes the move-constructor deleted.
-#define EAZ_DISALLOW_MOVE_CTOR(_type_) \
+#define ARK_DISALLOW_MOVE_CTOR(_type_) \
     _type_(const _type_ &&) = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes the move-assign operator deleted.
-#define EAZ_DISALLOW_MOVE_ASSIGN(_type_) \
+#define ARK_DISALLOW_MOVE_ASSIGN(_type_) \
     _type_& operator=(const _type_&&) = delete;
 
 ///-----------------------------------------------------------------------------
 /// @brief Makes both the move-constructor and move-assign operator deleted.
-#define EAZ_DISALLOW_MOVE_CTOR_AND_MOVE_ASSIGN(_type_) \
-    EAZ_DISALLOW_MOVE_CTOR(_type_)                     \
-    EAZ_DISALLOW_MOVE_ASSIGN(_type_)
+#define ARK_DISALLOW_MOVE_CTOR_AND_MOVE_ASSIGN(_type_) \
+    ARK_DISALLOW_MOVE_CTOR(_type_)                     \
+    ARK_DISALLOW_MOVE_ASSIGN(_type_)
 
 //
 // Everything
@@ -69,13 +69,13 @@ To_Type Cast(From_Type value) { return (To_Type)(value); }
 /// @brief
 ///    Makes the constructor, desctructor, copy-ctor, copy-assign,
 ///    move-ctor and move-assign deleted.
-#define EAZ_DISALLOW_EVERYTHING(_type_)            \
-    EAZ_DISALLOW_CTOR_DTOR(_type_)                 \
-    EAZ_DISALLOW_COPY_CTOR_AND_COPY_ASSIGN(_type_) \
-    EAZ_DISALLOW_MOVE_CTOR_AND_MOVE_ASSIGN(_type_)
+#define ARK_DISALLOW_EVERYTHING(_type_)            \
+    ARK_DISALLOW_CTOR_DTOR(_type_)                 \
+    ARK_DISALLOW_COPY_CTOR_AND_COPY_ASSIGN(_type_) \
+    ARK_DISALLOW_MOVE_CTOR_AND_MOVE_ASSIGN(_type_)
 
-#define EAZ_STATIC_CLASS(_type_) \
-        EAZ_DISALLOW_EVERYTHING(_type_)
+#define ARK_STATIC_CLASS(_type_) \
+        ARK_DISALLOW_EVERYTHING(_type_)
 
 //----------------------------------------------------------------------------//
 // Singleton                                                                  //
@@ -91,7 +91,7 @@ To_Type Cast(From_Type value) { return (To_Type)(value); }
 ///
 ///   Reference:
 ///     https://en.wikipedia.org/wiki/Singleton_pattern
-#define EAZ_SINGLETON_OF(_type_)                       \
+#define ARK_SINGLETON_OF(_type_)                       \
     public:                                            \
         static _type_* Instance() {                    \
             static _type_ s_instance;                  \

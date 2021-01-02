@@ -8,11 +8,10 @@
 #include "OS.hpp"
 #include "FileUtils.hpp"
 // Usings
-using namespace eaz;
+using namespace ark;
 
-namespace eaz { namespace Private {
+namespace Private {
 } // namespace Private
-} // namespace eaz
 
 
 String 

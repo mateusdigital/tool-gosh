@@ -1,7 +1,7 @@
 #pragma once
-//
+// std
 #include <functional>
-// 
+// Arkadia
 #include "BasicTypes.hpp"
 #include "CodeUtils.hpp"
 #include "Macros.hpp"
@@ -10,7 +10,7 @@
 #include "Result.hpp"
 
 
-namespace eaz { namespace CommandLine {
+namespace ark { namespace CommandLine {
 
 //
 //
@@ -145,4 +145,4 @@ private:
     }
 
 } // namespace CommandLine
-} // namespace eaz
+} // namespace ark
