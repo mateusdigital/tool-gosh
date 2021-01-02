@@ -114,6 +114,9 @@ public:
     // CTOR / DTOR
     //
 public:
+    String(i32 i) : __Container(std::to_string(i)) {}
+    String(u32 i) : __Container(std::to_string(i)) {}
+
     String(std::string const &right)
         : std::string(right)
     {
