@@ -2,10 +2,12 @@
 // std
 #include <functional>
 // Arkadia
+#include "Assert.hpp"
 #include "BasicTypes.hpp"
 #include "CodeUtils.hpp"
 #include "Macros.hpp"
 #include "Array.hpp"
+#include "Debug.hpp"
 #include "String.hpp"
 #include "Result.hpp"
 
@@ -44,11 +46,17 @@ public:
     }; // enum ParseStatus
 
     typedef std::function<ParseStatus(String const &)> ArgumentParseCallback_t;
+    typedef MinMax<u32> MinMax_t;
+
+    static const MinMax_t RequiresNoValues;
+    static const MinMax_t RequiresOneValue;
 
 public:
-    Argument( String                  const &short_name,
+    Argument(
+        String                  const &short_name,
         String                  const &long_name,
         String                  const &description,
+        MinMax_t                const &values_requirement,
         ArgumentParseCallback_t const &parse_callback);
 
 public:
@@ -56,20 +64,21 @@ public:
     String const & GetLongName   () const { return _long_name;   }
     String const & GetDescription() const { return _description; }
 
-    Array<String> const & GetValues  () const { return _values;            }
-    bool                  HasValues  () const { return !_values.IsEmpty(); }
-    size_t                ValuesCount() const { return !_values.Count  (); }
+    Array<String> const & GetValues          () const { return _values;             }
+    bool                  HasValues          () const { return !_values.IsEmpty();  }
+    size_t                ValuesCount        () const { return _values.Count();     }
+    MinMax_t const &      GetValueRequirement() const { return _values_requirement; }
 
 public:
     ParseStatus
-    ParseArgument(String const &value)
+    ParseArgument(String const &value = String::Empty())
     {
         ParseStatus status = ParseStatus::Valid;
 
         if(_parse_callback) {
             status = _parse_callback(value);
         }
-        if(status == ParseStatus::Valid) {
+        if(status == ParseStatus::Valid && !value.IsEmptyOrWhitespace()) {
             _values.PushBack(value);
         }
 
@@ -82,6 +91,7 @@ private:
     String _description;
 
     Array<String>           _values;
+    MinMax_t                _values_requirement;
     ArgumentParseCallback_t _parse_callback;
 }; // class Argument
 
@@ -89,7 +99,12 @@ private:
 class Parser
 {
 public:
-    typedef Result<bool> ParseResult_t;
+    struct ErrorCodes
+    {
+        static i32 const INVALID_FLAG         = 1;
+        static i32 const NOT_ENOUGH_ARGUMENTS = 2;
+        static i32 const FAILED_ON_PARSE      = 3;
+    };
 
     static String const ShortFlagPrefix;
     static String const LongFlagPrefix;
@@ -97,6 +112,8 @@ public:
 
     static char const LongFlagSeparator;
     static char const WindowsFlagSeparator;
+
+    typedef Result<bool> ParseResult_t;
 
 public:
     explicit Parser();
@@ -109,7 +126,8 @@ public:
         String                            const &short_name,
         String                            const &long_name,
         String                            const &description,
-        Argument::ArgumentParseCallback_t const &parse_callback);
+        Argument::MinMax_t                const &values_requirements,
+        Argument::ArgumentParseCallback_t const &parse_callback = nullptr);
 
     Argument const * FindArgumentByName(String const &name) const;
     Argument       * FindArgumentByName(String const &name) {
@@ -125,7 +143,8 @@ public:
 
 private:
     bool IsShortFlag(String const &item) const;
-    bool IsLongFlag(String const &item) const;
+    bool IsLongFlag (String const &item) const;
+    bool IsFlag     (String const &item) const { return IsShortFlag(item) || IsLongFlag(item); }
 
     Array<String> SplitShortFlag(String const &item) const;
     Array<String> SplitLongFlag (String const &item) const;

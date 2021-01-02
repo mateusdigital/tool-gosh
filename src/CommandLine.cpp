@@ -53,14 +53,20 @@ CommandLine::GetArgRaw(u32 const index)
 //
 //
 //
+
+const CommandLine::Argument::MinMax_t CommandLine::Argument::RequiresNoValues = {0, 0};
+const CommandLine::Argument::MinMax_t CommandLine::Argument::RequiresOneValue = {1, 1};
+
 CommandLine::Argument::Argument(
     String                  const &short_name,
     String                  const &long_name,
     String                  const &description,
+    MinMax_t                const &values_requirement,
     ArgumentParseCallback_t const &parse_callback)
     : _short_name(short_name)
     , _long_name(long_name)
     , _description(description)
+    , _values_requirement(values_requirement)
     , _parse_callback(parse_callback)
 {
     // @todo(stdmatt): Assert that things are not empty... Dec 30, 2020
@@ -108,28 +114,36 @@ CommandLine::Parser::CreateArgument(
     String                            const &short_name,
     String                            const &long_name,
     String                            const &description,
+    Argument::MinMax_t                const &values_requirements,
     Argument::ArgumentParseCallback_t const &parse_callback)
 {
+    // @todo(stdmatt): Add checks to prevent that both short and long names to be empty... Jan 02, 2021
+
     // Try to find it before...
-    Argument *arg = FindArgumentByName(short_name);
+    Argument *arg = short_name.IsEmpty() ? nullptr : FindArgumentByName(short_name);
     if(arg) {
         return *arg;
     }
-    arg = FindArgumentByName(long_name);
+
+    arg = long_name.IsEmpty() ? nullptr : FindArgumentByName(long_name);
     if(arg) {
         return *arg;
     }
 
     // Ok we don't have it, so let's create.
-    _arguments.EmplaceBack(short_name, long_name, description, parse_callback);
+    _arguments.EmplaceBack(short_name, long_name, description, values_requirements, parse_callback);
     return _arguments.Back();
 }
 
 CommandLine::Argument const *
 CommandLine::Parser::FindArgumentByName(String const &name) const
 {
+    String clean_name = name;
+    clean_name.TrimLeft(Parser::ShortFlagPrefix  [0]);
+    clean_name.TrimLeft(Parser::WindowsFlagPrefix[0]);
+
     for(Argument const &arg : _arguments) {
-        if(arg.GetShortName() == name || arg.GetLongName() == name) {
+        if(arg.GetShortName() == clean_name || arg.GetLongName() == clean_name) {
             return &arg;
         }
     }
@@ -165,6 +179,97 @@ CommandLine::Parser::Evaluate()
             clean_components.PushBack(item);
         }
     }
+
+    //
+    for(
+        size_t i = 1, // 0 is the name of the program
+        components_count = clean_components.Count();
+        i < components_count;
+        ++i)
+    {
+        String const &item    = clean_components[i];
+        bool   const  is_flag = IsShortFlag(item) || IsLongFlag(item);
+
+        Argument *arg = FindArgumentByName(item);
+        //
+        // Pure Positional
+        if(!arg && !is_flag) {
+            _positional_values.PushBack(item);
+            continue;
+        }
+
+        //
+        // Invalid flag :(
+        if(!arg && is_flag) {
+            return ParseResult_t::Fail({ ErrorCodes::INVALID_FLAG, item } );
+        }
+
+        //
+        // Argument ;D
+        Argument::MinMax_t const &value_requirement = arg->GetValueRequirement();
+
+        // Does not require any value...
+        if(value_requirement.min == 0 &&
+           value_requirement.max == 0)
+        {
+            arg->ParseArgument();
+        }
+        // Does require an value...
+        else
+        {
+            do {
+                size_t const next_index   = (i + 1);
+                size_t const values_count = arg->ValuesCount();
+
+                // Command line ended without providing enough arguments to this flag.
+                if(next_index >= components_count && values_count < value_requirement.min) {
+                    return ParseResult_t::Fail({
+                        ErrorCodes::NOT_ENOUGH_ARGUMENTS,
+                        String::Format(
+                            "Flag ({}) requires at least ({}) values - Found: ({})",
+                            item,
+                            value_requirement.min,
+                            values_count
+                        )
+                    });
+                }
+
+                String const &next_item = clean_components[next_index];
+                // Found another flag but we didn't provide enough arguments to this flag.
+                if(IsFlag(next_item) && values_count < value_requirement.min) {
+                    return ParseResult_t::Fail({
+                        ErrorCodes::NOT_ENOUGH_ARGUMENTS,
+                        String::Format(
+                            "Flag ({}) requires at least ({}) values - Found: ({})",
+                            item,
+                            value_requirement.min,
+                            values_count
+                        )
+                    });
+                }
+
+                Argument::ParseStatus const status = arg->ParseArgument(next_item);
+                if(status != Argument::ParseStatus::Valid) {
+                    return ParseResult_t::Fail({
+                        ErrorCodes::FAILED_ON_PARSE,
+                        String::Format(
+                            "Failed to parse Flag ({}) with value ({})",
+                            item,
+                            next_item
+                        )
+                    });
+                }
+
+                i = next_index;
+
+                // Already parsed enough values for this flag...
+                if(value_requirement.max >= arg->ValuesCount()) {
+                    break;
+                }
+            } while(true);
+        }
+    }
+
     return ParseResult_t::Success(true);
 }
 
@@ -219,7 +324,7 @@ CommandLine::Parser::SplitShortFlag(String const &item) const
         char const c = item[i];
         Argument const * const arg = FindArgumentByName(String(c));
         if(arg) { // This is a flag...
-            split_items.PushBack(String::Format("-%c", c));
+            split_items.PushBack(String::Format("-{}", c));
         } else {
             split_items.PushBack(String(c));
         }
