@@ -1,20 +1,13 @@
 #pragma once
 
-//
+// std
 #include <vector>
+// Arkadia
+#include "BasicTypes.hpp"
+#include "Algo.hpp"
 
-#include <algorithm>
-namespace Algo {
 
-template <typename Dst_Type, typename Src_Type>
-void Append(Dst_Type &dst, Src_Type const &src)
-{
-    dst.Reserve(dst.Count() + src.Count());
-    std::copy (src.begin(), src.end(), std::back_inserter(dst));
-}
-
-}
-
+namespace ark {
 
 template <typename Item_Type>
 class Array
@@ -56,8 +49,9 @@ public:
     Item_Type const & Back() const { return __Container::back(); }
 
     __Container::iterator       begin() noexcept       { return __Container::begin(); }
-	__Container::const_iterator begin() const noexcept { return __Container::begin(); }
-	__Container::iterator       end  () noexcept       { return __Container::end  (); }
-	__Container::const_iterator end  () const noexcept { return __Container::end  (); }
+    __Container::const_iterator begin() const noexcept { return __Container::begin(); }
+    __Container::iterator       end  () noexcept       { return __Container::end  (); }
+    __Container::const_iterator end  () const noexcept { return __Container::end  (); }
 
 }; // class Array
+}  // namespace ark
