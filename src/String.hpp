@@ -4,6 +4,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <string>
+// 3rd-party
+#include "fmt/format.h"
 // Arkadia
 #include "Array.hpp"
 #include "CodeUtils.hpp"
@@ -116,6 +118,12 @@ public:
         return s;
     }
 
+    bool operator==(String const &rhs) const
+    {
+        return this->StdString() == rhs.StdString();
+    }
+
+
     //
     // CTOR / DTOR
     //
@@ -151,11 +159,11 @@ public:
     //
     //
 public:
+    template <typename ...Args>
     static String
-    Format(String const &fmt, ...)
+    Format(String const &fmt, Args... args)
     {
-        // @todo(stdmatt): Implement... - Dec 28, 2020
-        return fmt; 
+        return fmt::format(fmt.CStr(), args...);
     }
 
     //
@@ -288,6 +296,7 @@ public:
             __Container::operator[](i) = toupper(__Container::operator[](i));
         }
     }
+
 }; // class String
 
 } // namespace ark
