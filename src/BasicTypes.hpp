@@ -24,7 +24,12 @@ typedef int64_t i64;
 typedef float  f32;
 typedef double f64;
 
-
+template <typename T>
+struct NumericLimits
+    : public std::numeric_limits<T>
+{
+    static constexpr T Max = std::numeric_limits<T>::max();
+};
 //
 //
 //
