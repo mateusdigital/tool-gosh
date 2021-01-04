@@ -3,8 +3,7 @@
 #include "BasicTypes.hpp"
 
 
-namespace ark {
-namespace BuildInfo {
+namespace ark { namespace BuildInfo {
 
 //
 // Version
