@@ -69,6 +69,9 @@ public:
     size_t                ValuesCount        () const { return _values.Count();     }
     MinMax_t const &      GetValueRequirement() const { return _values_requirement; }
 
+    void SetAsFound()        { _found = true; }
+    bool WasFound  () const  { return _found; }
+
 public:
     ParseStatus
     ParseArgument(String const &value = String::Empty())
@@ -93,6 +96,8 @@ private:
     Array<String>           _values;
     MinMax_t                _values_requirement;
     ArgumentParseCallback_t _parse_callback;
+
+    bool _found = false;
 }; // class Argument
 
 
@@ -122,7 +127,7 @@ public:
     explicit Parser(Array<String> const & cmd_line_items);
 
 public:
-    Argument& CreateArgument(
+    void CreateArgument(
         String                            const &short_name,
         String                            const &long_name,
         String                            const &description,
@@ -148,7 +153,6 @@ private:
 
     Array<String> SplitShortFlag(String const &item) const;
     Array<String> SplitLongFlag (String const &item) const;
-
 
 private:
     Array<Argument> _arguments;

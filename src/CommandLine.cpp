@@ -109,7 +109,7 @@ CommandLine::Parser::Parser(Array<String> const & cmd_line_items)
     // Empty...
 }
 
-CommandLine::Argument &
+void
 CommandLine::Parser::CreateArgument(
     String                            const &short_name,
     String                            const &long_name,
@@ -122,17 +122,16 @@ CommandLine::Parser::CreateArgument(
     // Try to find it before...
     Argument *arg = short_name.IsEmpty() ? nullptr : FindArgumentByName(short_name);
     if(arg) {
-        return *arg;
+        return;
     }
 
     arg = long_name.IsEmpty() ? nullptr : FindArgumentByName(long_name);
     if(arg) {
-        return *arg;
+        return;
     }
 
     // Ok we don't have it, so let's create.
     _arguments.EmplaceBack(short_name, long_name, description, values_requirements, parse_callback);
-    return _arguments.Back();
 }
 
 CommandLine::Argument const *
@@ -201,11 +200,15 @@ CommandLine::Parser::Evaluate()
         //
         // Invalid flag :(
         if(!arg && is_flag) {
-            return ParseResult_t::Fail({ ErrorCodes::INVALID_FLAG, item } );
+            return ParseResult_t::Fail({
+                ErrorCodes::INVALID_FLAG,
+                String::Format("({}) is not a valid flag.", item)
+            });
         }
 
         //
         // Argument ;D
+        arg->SetAsFound();
         Argument::MinMax_t const &value_requirement = arg->GetValueRequirement();
 
         // Does not require any value...
@@ -232,6 +235,10 @@ CommandLine::Parser::Evaluate()
                             values_count
                         )
                     });
+                }
+
+                if(next_index >= components_count) {
+                    break;
                 }
 
                 String const &next_item = clean_components[next_index];
@@ -261,9 +268,8 @@ CommandLine::Parser::Evaluate()
                 }
 
                 i = next_index;
-
                 // Already parsed enough values for this flag...
-                if(value_requirement.max >= arg->ValuesCount()) {
+                if(arg->ValuesCount() >= value_requirement.max) {
                     break;
                 }
             } while(true);
