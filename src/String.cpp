@@ -119,6 +119,9 @@ String::FindLastIndexOf(char const needle, size_t start_index /* = 0 */) const
         if(__Container::operator[](i) == needle) {
             return i;
         }
+        else if(i == 0) {
+            return INVALID_STRING_INDEX;
+        }
     }
 
     return INVALID_STRING_INDEX;
@@ -153,7 +156,9 @@ String::Split(char const separator) const
     while(true) {
         size_t const new_index  = FindIndexOf(separator, index);
         String const new_string = SubString(index, new_index);
-        splits.PushBack(new_string);
+        if(!new_string.IsEmpty()) {
+            splits.PushBack(new_string);
+        }
 
         if(new_index == INVALID_STRING_INDEX) {
             return splits;
