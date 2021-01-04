@@ -41,5 +41,18 @@ FileUtils::WriteAllLines(
     String        const &new_line,
     WriteMode     const  write_mode)
 {
+    // @todo(stdmatt): Better error handling - 02 Dec, 2021...
+    std::ofstream file;
+
+    if(write_mode == WriteMode::Append) {
+       file.open(path, std::ofstream::out | std::ofstream::app);
+    } else if(write_mode == WriteMode::Overwrite) {
+       file.open(path, std::ofstream::out | std::ofstream::trunc);
+    }
+
+    for(String const &line : lines) {
+        file << line.CStr();
+        file << new_line;
+    }
     return WriteResult_t::Success(0);
 }
