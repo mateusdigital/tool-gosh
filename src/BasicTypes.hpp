@@ -4,7 +4,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <numeric>
 // Arkadia
+#include <limits>
+
 #include "Assert.hpp"
 
 //
@@ -41,7 +44,7 @@ struct MinMax
     T min;
     T max;
 
-    MinMax(T min, T max)
+    constexpr MinMax(T min, T max)
         : min(min)
         , max(max)
     {
