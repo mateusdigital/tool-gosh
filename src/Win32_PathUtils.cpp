@@ -3,11 +3,14 @@
 // @todo(stdmatt): Organize the windows headers... Dec 20, 2020
 // Windows Headers
 #include <Shlobj.h>
+#include <shlwapi.h>
 #undef CreateFile
 #undef CreateDirectory
+#pragma comment(lib, "Shlwapi.lib")
 // Arkadia
 #include "OS.hpp"
 #include "FileUtils.hpp"
+#include "Math.hpp"
 
 // Usings
 using namespace ark;
@@ -28,6 +31,100 @@ PathUtils::GetUserHome()
     }
 
     return String(path);
+}
+
+String
+PathUtils::GetCWD()
+{
+    return MakeAbsolute(".");
+}
+
+bool
+PathUtils::IsAbs(String const& path)
+{
+    return PathIsRoot(path.CStr()) == TRUE;
+}
+
+
+bool
+PathUtils::IsFile(String const &path)
+{
+    // @todo(stdmatt): Check if this is correct.. Dec 21, 2020
+    DWORD const file_attributes = GetFileAttributesA(path.CStr());
+    bool  const result          = (file_attributes != INVALID_FILE_ATTRIBUTES
+                              &&  !(file_attributes & FILE_ATTRIBUTE_DIRECTORY));
+    return result;
+}
+
+bool
+PathUtils::IsDir(String const &path)
+{
+    // @todo(stdmatt): Check if this is correct.. Dec 21, 2020
+
+    DWORD const file_attributes = GetFileAttributesA(path.CStr());
+    bool  const result          = (file_attributes != INVALID_FILE_ATTRIBUTES
+                              &&  (file_attributes & FILE_ATTRIBUTE_DIRECTORY));
+    return result;
+}
+
+String
+PathUtils::MakeAbsolute(String const &path)
+{
+    // @todo(stdmatt): Don't hardcode the char-type.       - Jan 02, 2021
+    // @todo(stdmatt): Don't hardcode the size of the path - Jan 02, 2021
+    // @todo(stdmatt): Better error handling               - Jav 02, 2021
+
+    char buffer[MAX_PATH] = {};
+    DWORD result = GetFullPathName(path.CStr(), MAX_PATH, buffer, nullptr);
+    ARK_ASSERT(result != 0, "Failed to GetFullPathName of: ({})", path);
+
+    return String(buffer);
+}
+
+
+String
+PathUtils::MakeRelative(
+    String const &path,
+    String const &to_what_path)
+{
+    if(path.IsEmpty() || to_what_path.IsEmpty()) {
+        return "";
+    }
+
+    // @todo(stdmatt): Creating too many copies... Dec 21, 2020
+    String const canonized_path    = Canonize(path        );
+    String const canonized_to_what = Canonize(to_what_path);
+    Array<String> path_split    = canonized_path   .Split(OS::PathSeparatorChar());
+    Array<String> to_what_split = canonized_to_what.Split(OS::PathSeparatorChar());
+
+    if(path_split[0] != to_what_split[0]) { // Different drives?
+        return canonized_path; // Can't go there relatively...
+    }
+
+    size_t right_most_index = 0;
+    for(
+        size_t i = 0,
+        least_count = Math::Min(path_split.Count(),  to_what_split.Count());
+        i < least_count;
+        ++i)
+    {
+        if(path_split[i] != to_what_split[i]) {
+            break;
+        }
+        right_most_index = i;
+    }
+
+    size_t const diff           = to_what_split.Count() - right_most_index;
+    String const parent_dir_str = OS::PathParentDirectoryString() + OS::PathSeparatorString();
+    String const relative_path  = String::Repeat(parent_dir_str, diff)
+                                + String::Join(
+                                    to_what_split.Begin() + right_most_index,
+                                    to_what_split.End  (),
+                                    OS::PathSeparatorChar()
+                                );
+
+    // @todo(stdmatt): Doing super adhoc now, but we should look how .net does... Dec 21, 2020
+    return relative_path;
 }
 
 // @todo(stdmatt): Make it a variadic template... Dec 20, 2020.
@@ -61,11 +158,12 @@ PathUtils::Canonize(
     CanonizeCaseOptions  const case_options  /* = CanonizeCaseOptions::DoNotChange  */,
     CanonizeSlashOptions const slash_options /* = CanonizeSlashOptions::ChangeToForwardSlashes */)
 {
-    Array<String> components = path.Split({
+    String const abs_path = MakeAbsolute(path);
+    Array<String> components = abs_path.Split({
         OS::PathSeparatorChar(), OS::PathAlternateSeparatorChar()
     });
 
-    String final_path = String::CreateWithCapacity(path.Length());
+    String final_path = String::CreateWithCapacity(abs_path.Length());
     for(String component : components) {
         if(case_options == CanonizeCaseOptions::ChangeToLowerCase) {
             component.ToLower();
@@ -75,56 +173,21 @@ PathUtils::Canonize(
         char const slash_char =
             slash_options == CanonizeSlashOptions::ChangeToBackwardSlashes ? '\\' :
             slash_options == CanonizeSlashOptions::ChangeToForwardSlashes  ? '/'  :
-            path[final_path.Length()];
+            abs_path[final_path.Length()];
 
         final_path += component;
         final_path += slash_char;
-
     }
-
+    // @todo(stdmatt): Super slopply way to ensure that we don't have the trailing
+    // slash char on the path, find a better way to do it - Jan 02, 2021.
+    if(final_path.Back() == OS::PathSeparatorChar()) {
+        final_path.PopBack();
+    }
     return final_path;
 }
 
-String 
-PathUtils::MakeRelative(
-    String const &path, 
-    String const &to_what_path)
-{
-    if(path.IsEmpty() || to_what_path.IsEmpty()) {
-        return "";
-    }
 
-    // @todo(stdmatt): Creating too many copies... Dec 21, 2020
-    String path_canonized    = Canonize(to_what_path);
-    String to_what_canonized = Canonize(to_what_path);
-    
-    // @design(stdmatt): Doing super adhoc now, but we should look how .net does... Dec 21, 2020
-    return path;
-}
-
-
-bool 
-PathUtils::IsFile(String const &path)
-{
-    // @todo(stdmatt): Check if this is correct.. Dec 21, 2020
-    DWORD const file_attributes = GetFileAttributesA(path.CStr());
-    bool  const result          = (file_attributes != INVALID_FILE_ATTRIBUTES
-                              &&  !(file_attributes & FILE_ATTRIBUTE_DIRECTORY));
-    return result;
-}
-
-bool 
-PathUtils::IsDir(String const &path)
-{
-    // @todo(stdmatt): Check if this is correct.. Dec 21, 2020
-
-    DWORD const file_attributes = GetFileAttributesA(path.CStr());
-    bool  const result          = (file_attributes != INVALID_FILE_ATTRIBUTES
-                              &&  (file_attributes & FILE_ATTRIBUTE_DIRECTORY));
-    return result;
-}
-
-String 
+String
 PathUtils::Dirname(String const &path)
 {
     // c:/some/nice/dir  -> c:/some/nice
@@ -142,8 +205,11 @@ PathUtils::Basename(String const &path)
     // c:/some/nice/dir/ -> c:/some/nice/dir
 
     // @todo(stdmatt): Handle the OS::PathAlternateChar - Dec 21, 2020
-    size_t const last_index = path.FindLastIndexOf(OS::PathSeparatorChar());
-    return path.SubString(last_index, path.Length());
+    String const clean_path = Canonize(path);
+    size_t const last_index = clean_path.FindLastIndexOf(OS::PathSeparatorChar());
+    String const basename   = clean_path.SubString(last_index + 1, clean_path.Length());
+
+    return basename;
 }
 
 

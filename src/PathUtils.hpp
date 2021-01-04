@@ -4,10 +4,18 @@
 #include "Result.hpp"
 #include "String.hpp"
 
-
 namespace ark { namespace PathUtils {
 
 String GetUserHome();
+String GetCWD     ();
+
+bool IsAbs (String const &path);
+bool IsFile(String const &path);
+bool IsDir (String const &path);
+
+String MakeAbsolute(String const &path);
+String MakeRelative(String const &path, String const &to_what_path);
+
 
 // @todo(stdmatt): Make it a variadic template... Dec 20, 2020.
 String Join(
@@ -36,14 +44,7 @@ String Canonize(
     CanonizeSlashOptions const slash_options = CanonizeSlashOptions::ChangeToForwardSlashes
 );
 
-
-String MakeRelative(String const &path, String const &to_what_path);
-
-
-bool IsFile(String const &path);
-bool IsDir (String const &path);
-
-String Dirname(String const &path);
+String Dirname (String const &path);
 String Basename(String const &path);
 
 
