@@ -86,7 +86,33 @@ public:
         ark_local_persist String s;
         return s;
     }
-    static String 
+
+    static String
+    Repeat(String const &what, size_t const times)
+    {
+        if(times == 0) {
+            return String::Empty();
+        }
+        size_t const repeat_len = what.Length();
+        size_t const result_len = times * repeat_len;
+        String       result     = String::CreateWithLength(result_len);
+
+        for(size_t i = 0; i < result_len; i += repeat_len) {
+            result.MemCopy(i, what.CStr(), repeat_len);
+        }
+
+        return result;
+    }
+
+    static String
+    CreateWithLength(size_t const len)
+    {
+        String s;
+        s.resize(len);
+        return s;
+    }
+
+    static String
     CreateWithCapacity(size_t capacity) 
     {
         String s;
@@ -94,18 +120,27 @@ public:
         return s;
     }
 
+    template <typename Type>
     static String
-    Join(Array<String> const &components, char const separator = ' ')
+    Join(
+        typename Type const &beg,
+        typename Type const &end,
+        char const separator = ' ')
     {
+       Type curr = beg;
+
         size_t size_to_reserve = 0;
-        for(size_t i = 0, count = components.Count(); i < count; ++i) {
-            size_to_reserve += components.Count() + 1; // Separator Size.
+        while(curr != end) {
+            size_to_reserve += curr->Length() + 1; // Separator Size.
+            ++curr;
         }
 
         String s = String::CreateWithCapacity(size_to_reserve);
         size_t offset = 0;
-        for(size_t i = 0, count = components.Count(); i < count; ++i) {
-            String const &component     = components[i];
+
+        curr = beg;
+        while(curr != end) {
+            String const &component     = *curr;
             size_t const  component_len = component.Length();
 
             s.MemCopy(offset, component.CStr(), component_len);
@@ -113,9 +148,17 @@ public:
 
             s[offset] = separator;
             offset += 1;
+
+            ++curr;
         }
 
         return s;
+    }
+
+    static String
+    Join(Array<String> const &components, char const separator = ' ')
+    {
+        return Join(components.Begin(), components.End(), separator);
     }
 
     bool operator==(String const &rhs) const
@@ -230,6 +273,20 @@ public:
     void PushBack(String const &rhs) { *this += rhs; }
     void PushBack(char   const  rhs) { *this += rhs; }
 
+    void PopBack() { __Container::pop_back(); }
+
+
+    __Container::reference       Back()       { return __Container::back(); }
+    __Container::const_reference Back() const { return __Container::back(); }
+
+    __Container::reference       Front()       { return __Container::front(); }
+    __Container::const_reference Front() const { return __Container::front(); }
+
+    __Container::iterator       begin() noexcept       { return __Container::begin(); }
+    __Container::const_iterator begin() const noexcept { return __Container::begin(); }
+    __Container::iterator       end  () noexcept       { return __Container::end  (); }
+    __Container::const_iterator end  () const noexcept { return __Container::end  (); }
+
     //
     //
     //
@@ -265,7 +322,7 @@ public:
         }
         
         // @todo(stdmatt): We are creating too much copies... Dec 20, 2020 
-        __Container::operator=(SubString(0, right_index));
+        __Container::operator=(SubString(0, right_index + 1));
     }
 
     void
