@@ -1,12 +1,7 @@
 // Header
 #include "PathUtils.hpp"
-// @todo(stdmatt): Organize the windows headers... Dec 20, 2020
-// Windows Headers
-#include <Shlobj.h>
-#include <shlwapi.h>
-#undef CreateFile
-#undef CreateDirectory
-#pragma comment(lib, "Shlwapi.lib")
+#if (ARK_CURRENT_OS == ARK_OS_WINDOWS)
+#include "Platform/Win32/BasicWin32Headers.hpp"
 // Arkadia
 #include "OS.hpp"
 #include "FileUtils.hpp"
@@ -14,10 +9,6 @@
 
 // Usings
 using namespace ark;
-
-namespace Private {
-} // namespace Private
-
 
 String 
 PathUtils::GetUserHome() 
@@ -33,10 +24,10 @@ PathUtils::GetUserHome()
     return String(path);
 }
 
-String
-PathUtils::GetCWD()
+Array<String>
+PathUtils::GetDirectoryEntries(String const &path)
 {
-    return MakeAbsolute(".");
+    return {};
 }
 
 bool
@@ -127,29 +118,6 @@ PathUtils::MakeRelative(
     return relative_path;
 }
 
-// @todo(stdmatt): Make it a variadic template... Dec 20, 2020.
-String 
-PathUtils::Join(
-    String const &a,
-    String const &b,
-    String const &c)
-{
-    String result = a;
-    if(!b.IsEmpty()) { 
-        String const &path_separator = OS::PathSeparatorString();
-        if(a.IsEmpty()) {
-            result = b;
-        } else {
-            result += path_separator + b;
-        }
-
-        if(!c.IsEmpty()) {
-            result += path_separator + c;
-        }
-    }
-    
-    return result;
-}
 
 
 String 
@@ -297,3 +265,5 @@ PathUtils::CreateFile(
 
     return CreateFileResult_t::Success(true);
 }
+
+#endif // (ARK_CURRENT_OS == ARK_OS_WINDOWS)
