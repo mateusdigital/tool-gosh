@@ -1,7 +1,10 @@
 #pragma once
 
+// Arkadia
+#include "Discovery.hpp"
 
-namespace DebugUtils {
+
+namespace ark { namespace DebugUtils {
 
 bool IsDebuggerPresent();
 void BreakInDebugger  ();
@@ -9,12 +12,12 @@ void BreakInDebugger  ();
 //
 // ARK_DEBUG_BREAK()
 // 
-#if defined(ARK_BUILD_DEBUG)
-    #define ARK_DEBUG_BREAK()   \
-        do {                    \
-            BreakInDebugger();  \
+#if (ARK_IS_DEBUG_BUILD)
+    #define ARK_DEBUG_BREAK()                    \
+        do {                                     \
+            ark::DebugUtils::BreakInDebugger();  \
         } while(0)
-#else
+#else // !(ARK_IS_DEBUG_BUILD)
     #define ARK_DEBUG_BREAK()   \
         do {                    \
             /* Empty */         \
@@ -25,10 +28,11 @@ void BreakInDebugger  ();
 //
 // ARK_ONLY_IN_DEBUG({ ... })
 //
-#if defined(ARK_BUILD_DEBUG)
+#if (ARK_IS_DEBUG_BUILD)
     #define ARK_ONLY_IN_DEBUG(_code_) do { _code_ } while(0)
-#else
+#else // !(ARK_IS_DEBUG_BUILD)
     #define ARK_ONLY_IN_DEBUG(_code_) do { /* Empty */ } while(0)
 #endif // #if defined(ARK_BUILD_DEBUG)
 
 } // namespace DebugUtils
+} // namespace ark
