@@ -1,7 +1,8 @@
 #pragma once
 
 // Arkadia
-#include "Macros.hpp"
+#include "Basic.hpp"
+
 namespace ark { namespace Math {
 
 // @todo(stdmatt): If is numeric is best to not pass by reference... Jan 02, 2021
