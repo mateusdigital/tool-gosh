@@ -5,9 +5,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <numeric>
-// Arkadia
 #include <limits>
-
+// Arkadia
 #include "Assert.hpp"
 
 //
@@ -33,6 +32,7 @@ struct NumericLimits
 {
     static constexpr T Max = std::numeric_limits<T>::max();
 };
+
 //
 //
 //
@@ -48,8 +48,7 @@ struct MinMax
         : min(min)
         , max(max)
     {
-        // @todo(stdmatt): Format string is assuming ints... Jan 02, 2021
-        ARK_ASSERT(min <= max, "min needs to <= max - min(%d), max(%d)", min, max);
+        ARK_ASSERT(min <= max, "min needs to <= max - min({}), max({})", min, max);
     }
 }; // struct MinMax
 
