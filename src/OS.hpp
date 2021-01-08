@@ -2,27 +2,31 @@
 
 // Arkadia
 #include "BasicTypes.hpp"
+#include "Discovery.hpp"
 #include "String.hpp"
 
-namespace ark {
-namespace OS {
 
-// @todo(stdmatt): Make this constants and ARK_FORCE_INLINE... Dec 21, 2020
-ARK_FORCE_INLINE String NewLineString      () { return "\n"; }
+namespace ark { namespace OS {
 
+#if (ARK_CURRENT_OS == ARK_OS_WINDOWS)
+    ARK_FORCE_INLINE char           NewLineChar                 () { return '\n'; }
+    ARK_FORCE_INLINE char           PathSeparatorChar           () { return '/';  }
+    ARK_FORCE_INLINE char           PathAlternateSeparatorChar  () { return '\\'; }
+#else // (ARK_CURRENT_OS == ARK_OS_WINDOWS)
+    ARK_FORCE_INLINE char           NewLineChar                 () { return '\n'; }
+    ARK_FORCE_INLINE char           PathSeparatorChar           () { return '/';  }
+    ARK_FORCE_INLINE char           PathAlternateSeparatorChar  () { return '/';  }
+#endif // (ARK_CURRENT_OS == ARK_OS_WINDOWS)
 
-// @todo(stdmatt): Make it for GNU and macOS - Dec 20, 2020
-ARK_FORCE_INLINE String PathSeparatorString         () { return "/"; }
-ARK_FORCE_INLINE String PathAlternateSeparatorString() { return "\\"; }
+ARK_FORCE_INLINE String const & NewLineString               () { ark_local_persist String s_str(NewLineChar               ()); return s_str; }
+ARK_FORCE_INLINE String const & PathSeparatorString         () { ark_local_persist String s_str(PathSeparatorChar         ()); return s_str; }
+ARK_FORCE_INLINE String const & PathAlternateSeparatorString() { ark_local_persist String s_str(PathAlternateSeparatorChar()); return s_str; }
 
-ARK_FORCE_INLINE char   PathSeparatorChar           () { return '/'; }
-ARK_FORCE_INLINE char   PathAlternateSeparatorChar  () { return '\\'; }
-
-ARK_FORCE_INLINE String PathCurrentDirectoryString() { return ".";  }
-ARK_FORCE_INLINE String PathParentDirectoryString () { return ".."; }
+ARK_FORCE_INLINE String const & PathCurrentDirectoryString() { ark_local_persist String s_str(".");  return s_str; }
+ARK_FORCE_INLINE String const & PathParentDirectoryString () { ark_local_persist String s_str(".."); return s_str; }
 
 ARK_FORCE_INLINE bool
-IsCharAPathSeperator(char const c) 
+IsCharAPathSeparator(char const c)
 {
     return PathSeparatorChar         () == c
         || PathAlternateSeparatorChar() == c;
