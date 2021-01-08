@@ -63,19 +63,21 @@ CommandLine::Argument::Argument(
     String                  const &description,
     MinMax_t                const &values_requirement,
     ArgumentParseCallback_t const &parse_callback)
-    : _short_name(short_name)
-    , _long_name(long_name)
-    , _description(description)
+    : _short_name        (short_name)
+    , _long_name         (long_name)
+    , _description       (description)
     , _values_requirement(values_requirement)
-    , _parse_callback(parse_callback)
+    , _parse_callback    (parse_callback)
 {
-    // @todo(stdmatt): Assert that things are not empty... Dec 30, 2020
+    ARK_ASSERT_FALSE(
+        (short_name.IsEmptyOrWhitespace() && long_name.IsEmptyOrWhitespace()),
+        "Argument can't have both short and long names empty"
+    );
 }
 
 //
 //
 //
-
 String const CommandLine::Parser::ShortFlagPrefix   = "-";
 String const CommandLine::Parser::LongFlagPrefix    = "--";
 String const CommandLine::Parser::WindowsFlagPrefix = "/";
@@ -117,7 +119,10 @@ CommandLine::Parser::CreateArgument(
     Argument::MinMax_t                const &values_requirements,
     Argument::ArgumentParseCallback_t const &parse_callback)
 {
-    // @todo(stdmatt): Add checks to prevent that both short and long names to be empty... Jan 02, 2021
+    ARK_ASSERT_FALSE(
+        (short_name.IsEmptyOrWhitespace() && long_name.IsEmptyOrWhitespace()),
+        "Argument can't have both short and long names empty"
+    );
 
     // Try to find it before...
     Argument *arg = short_name.IsEmpty() ? nullptr : FindArgumentByName(short_name);
