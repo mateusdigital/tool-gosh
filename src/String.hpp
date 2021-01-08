@@ -127,7 +127,7 @@ public:
         typename Type const &end,
         char const separator = ' ')
     {
-       Type curr = beg;
+        Type curr = beg;
 
         size_t size_to_reserve = 0;
         while(curr != end) {
@@ -174,14 +174,14 @@ public:
     String(i32 i) : __Container(std::to_string(i)) {}
     String(u32 i) : __Container(std::to_string(i)) {}
 
-    String(std::string const &right)
-        : std::string(right)
+    String(std::string const &str)
+        : std::string(str)
     {
         // Empty...
     }
 
-    String(char const * const right = "")
-        : std::string(right)
+    String(char const * const str = "")
+        : std::string(str)
     {
         // Empty...
     }
@@ -355,5 +355,15 @@ public:
     }
 
 }; // class String
+
+
+//
+//
+//
+template <typename T>
+ARK_FORCE_INLINE String ToString(T t) { return std::to_string(t); }
+
+ARK_FORCE_INLINE String ToString(char const * const t) { return String(t); }
+ARK_FORCE_INLINE String ToString(String const &t)      { return t; }
 
 } // namespace ark
