@@ -466,10 +466,7 @@ def action_list_bookmarks(long = False):
     exit(0);
 
 ##------------------------------------------------------------------------------
-def action_add_bookmark(name, path):
-    if(path is None or len(path) == 0):
-        path = ".";
-
+def action_add_bookmark(name, path = "."):
     if((name is None or len(name) == 0) and path == "."):
         name = os.path.basename(canonize_path("."));
 
@@ -593,60 +590,36 @@ def action_print_bookmark(name):
     print(bookmark_path);
     exit(0);
 
+import argparse
 
 ##----------------------------------------------------------------------------##
 ## Script Initialization                                                      ##
 ##----------------------------------------------------------------------------##
 def main():
-    ##
-    ## gosh will pass as last parameter with user want color or not.
-    ## So we grab this information and remove them from list because
-    ## The other options will use the length of the list as a way to check
-    ## if the arguments are ok.
-    args = sys.argv[1:]
-    if(args[-1] == "no-colors"):
-        Globals.opt_no_colors = True;
-        args.pop();
 
-    ##
-    ## gosh.sh is using getopt(1) and it passes the arguments inside a pair
-    ## of single quotes - This method will remove them.
-    first_arg  = remove_enclosing_quotes(args[0]);
-    second_arg = remove_enclosing_quotes(args[1]) if len(args) > 1 else "";
-    third_arg  = remove_enclosing_quotes(args[2]) if len(args) > 2 else "";
+    parser = argparse.ArgumentParser(add_help=False);
 
-    ##
-    ## All the command line options are exclusive operations. i.e
-    ## they will run the requested command and exit after it.
-    ## Help / Version.
-    if(Constants.ACTION_HELP    == first_arg): print_help();
-    if(Constants.ACTION_VERSION == first_arg): print_version();
 
-    ##
-    ## List.
-    if(Constants.ACTION_LIST      == first_arg): action_list_bookmarks();
-    if(Constants.ACTION_LIST_LONG == first_arg): action_list_bookmarks(long=True);
+    parser.add_argument("-h", "--help"   ,   dest=None       ,           action="store_true");
+    parser.add_argument("-v", "--version",   dest=None       ,           action="store_true");
+    parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs=1 , action="store");
+    parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1 , action="store");
+    parser.add_argument("-l", "--list"   ,   dest=None       ,           action="store_true");
+    parser.add_argument("-L", "--list-long", dest=None       ,           action="store_true");
+    parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="+" , action="store");
+    parser.add_argument("-r", "--remove" ,   dest="remove"   , nargs=1 , action="store");
+    parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2 , action="store");
 
-    ##
-    ## Add
-    if(Constants.ACTION_ADD == first_arg):
-        action_add_bookmark (second_arg, third_arg);
-    ##
-    ## Remove
-    if(Constants.ACTION_REMOVE == first_arg):
-        action_remove_bookmark(second_arg);
-    ##
-    ## Update
-    if(Constants.ACTION_UPDATE == first_arg):
-        action_update_bookmark(second_arg, third_arg);
-    ##
-    ## Exists
-    if(Constants.ACTION_EXISTS_BOOKMARK == first_arg):
-        action_bookmark_exists(second_arg);
-    ##
-    ## Print
-    if(Constants.ACTION_PRINT == first_arg):
-        action_print_bookmark(second_arg);
+    args = parser.parse_args();
+    if  (args.help     ): print_help            ();
+    elif(args.version  ): print_version         ();
+    elif(args.exists   ): action_bookmark_exists(*args.exists);
+    elif(args.print    ): action_print_bookmark (*args.print );
+    elif(args.list     ): action_list_bookmarks ();
+    elif(args.list_long): action_list_bookmarks (long=True);
+    elif(args.add      ): action_add_bookmark   (*args.add);
+    elif(args.remove   ): action_remove_bookmark(*args.remove);
+    elif(args.update   ): action_update_bookmark(*args.update);
 
 
 if(__name__ == "__main__"):
