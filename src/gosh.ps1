@@ -17,11 +17,8 @@
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
 
-
-function _call_gosh()
-{
-    # $GOSH_CORE=gosh-core.py
-}
+$SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
+$SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
 
 ##----------------------------------------------------------------------------##
 ## Gosh                                                                       ##
@@ -32,4 +29,5 @@ if($args.Count -eq 0) {
     echo "gosh --help";
     return;
 }
-python3 ./gosh-core.py $args;
+
+& python3 $SCRIPT_DIR/gosh-core.py $args;
