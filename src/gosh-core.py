@@ -35,8 +35,8 @@ from pw_py_termcolor import *;
 ## Constants / Globals                                                        ##
 ##----------------------------------------------------------------------------##
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "1.0.0";
-PROGRAM_COPYRIGHT = "2015 - 2020";
+PROGRAM_VERSION   = "2.0.0";
+PROGRAM_COPYRIGHT = "2015 - 2021";
 
 ##------------------------------------------------------------------------------
 class Constants:
@@ -383,6 +383,8 @@ def print_fatal(msg):
 
 ##------------------------------------------------------------------------------
 def print_help():
+    import pdb;
+    pdb.set_trace();
     print("""Usage:
   gosh                        (Same as gosh -l)
   gosh <name>                 (To change the directory)
@@ -466,7 +468,7 @@ def action_list_bookmarks(long = False):
     exit(0);
 
 ##------------------------------------------------------------------------------
-def action_add_bookmark(name, path = "."):
+def action_add_bookmark(name = ".", path = "."):
     if(name == "." and path == "."):
         name = os.path.basename(canonize_path("."));
 
@@ -599,28 +601,38 @@ def main():
 
     parser = argparse.ArgumentParser(add_help=False);
 
+    parser.add_argument("-h", "--help"   ,   dest=None       ,            action="store_true");
+    parser.add_argument("-v", "--version",   dest=None       ,            action="store_true");
+    parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs=1  , action="store");
+    parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1  , action="store");
+    parser.add_argument("-l", "--list"   ,   dest=None       ,            action="store_true");
+    parser.add_argument("-L", "--list-long", dest=None       ,            action="store_true");
+    parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="*", action="store");
+    parser.add_argument("-r", "--remove" ,   dest="remove"   , nargs=1  , action="store");
+    parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2  , action="store");
 
-    parser.add_argument("-h", "--help"   ,   dest=None       ,           action="store_true");
-    parser.add_argument("-v", "--version",   dest=None       ,           action="store_true");
-    parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs=1 , action="store");
-    parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1 , action="store");
-    parser.add_argument("-l", "--list"   ,   dest=None       ,           action="store_true");
-    parser.add_argument("-L", "--list-long", dest=None       ,           action="store_true");
-    parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="+" , action="store");
-    parser.add_argument("-r", "--remove" ,   dest="remove"   , nargs=1 , action="store");
-    parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2 , action="store");
+    parser.add_argument("values", nargs="*"); ## Positional Values
 
     args = parser.parse_args();
+
     if  (args.help     ): print_help            ();
     elif(args.version  ): print_version         ();
     elif(args.exists   ): action_bookmark_exists(*args.exists);
     elif(args.print    ): action_print_bookmark (*args.print );
     elif(args.list     ): action_list_bookmarks ();
     elif(args.list_long): action_list_bookmarks (long=True);
-    elif(args.add      ): action_add_bookmark   (*args.add);
     elif(args.remove   ): action_remove_bookmark(*args.remove);
     elif(args.update   ): action_update_bookmark(*args.update);
 
+    ## args.add can be called without any argument, meaning that we want
+    ## to add the current path with the current base name as bookmark
+    ## so we need to compare it agaisnt None otherwise we can't capture
+    ## the case when we do gosh -a
+    elif(args.add is not None):
+        action_add_bookmark(*args.add);
+
+    elif(args.values):
+        action_print_bookmark(*args.values);
 
 if(__name__ == "__main__"):
     #If any error occurs in main, means that user is trying to use

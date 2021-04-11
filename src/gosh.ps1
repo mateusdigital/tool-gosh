@@ -20,14 +20,37 @@
 $SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
 $SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
 
+
 ##----------------------------------------------------------------------------##
 ## Gosh                                                                       ##
 ##----------------------------------------------------------------------------##
 ##
 ## No args, just list the bookmarks.
 if($args.Count -eq 0) {
-    echo "gosh --help";
+    gosh --help;
     return;
 }
 
-& python3 $SCRIPT_DIR/gosh-core.py $args;
+## Concat all the argumetn to make a string.
+## Then search for the string for any flags.
+## If we find this flags means that gosh is doing an action
+## and we don't need to care about changing the directory.
+## Otherwise we need to capture the output of it and make the
+## poweshell to cd to that dir ;D
+$cmd_line=" "
+for(($i = 0); ($i -lt $args.Count); (++$i)) {
+    $cmd_line += $args[$i].ToString();
+}
+
+$has_short_flags = $cmd_line.Contains(" -");
+$has_long_flags  = $cmd_line.Contains(" --");
+
+## Making an action...
+if(($has_short_flags) -or ($has_long_flags)) {
+    & python3 $SCRIPT_DIR/gosh-core.py $args;
+}
+## Changing directory...
+else {
+    $path = (& python3 $SCRIPT_DIR/gosh-core.py $args);
+    cd $path;
+}
