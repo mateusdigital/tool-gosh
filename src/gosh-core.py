@@ -467,7 +467,7 @@ def action_list_bookmarks(long = False):
 
 ##------------------------------------------------------------------------------
 def action_add_bookmark(name, path = "."):
-    if((name is None or len(name) == 0) and path == "."):
+    if(name == "." and path == "."):
         name = os.path.basename(canonize_path("."));
 
     #Must be valid name.
