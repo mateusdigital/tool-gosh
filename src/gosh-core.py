@@ -383,8 +383,6 @@ def print_fatal(msg):
 
 ##------------------------------------------------------------------------------
 def print_help():
-    import pdb;
-    pdb.set_trace();
     print("""Usage:
   gosh                        (Same as gosh -l)
   gosh <name>                 (To change the directory)
@@ -598,7 +596,6 @@ import argparse
 ## Script Initialization                                                      ##
 ##----------------------------------------------------------------------------##
 def main():
-
     parser = argparse.ArgumentParser(add_help=False);
 
     parser.add_argument("-h", "--help"   ,   dest=None       ,            action="store_true");

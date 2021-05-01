@@ -19,6 +19,7 @@
 
 $SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
 $SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
+$GOSH_EXE        = "$SCRIPT_DIR/gosh/gosh-core.py";
 
 
 ##----------------------------------------------------------------------------##
@@ -27,7 +28,7 @@ $SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
 ##
 ## No args, just list the bookmarks.
 if($args.Count -eq 0) {
-    gosh --help;
+    & python3 $GOSH_EXE --help;
     return;
 }
 
@@ -47,10 +48,10 @@ $has_long_flags  = $cmd_line.Contains(" --");
 
 ## Making an action...
 if(($has_short_flags) -or ($has_long_flags)) {
-    & python3 $SCRIPT_DIR/gosh-core.py $args;
+    & python3 $GOSH_EXE $args;
 }
 ## Changing directory...
 else {
-    $path = (& python3 $SCRIPT_DIR/gosh-core.py $args);
+    $path = (& python3 $GOSH_EXE $args);
     cd $path;
 }

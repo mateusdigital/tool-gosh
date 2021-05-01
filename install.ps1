@@ -9,9 +9,10 @@ $SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
 $SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
 $HOME_DIR        = "$env:USERPROFILE";
 ## Program
-$PROGRAM_NAME         = "gosh";
-$PROGRAM_SOURCE_PATH  = "$SCRIPT_DIR/src";
-$PROGRAM_INSTALL_PATH = "$HOME_DIR/.stdmatt_bin/$PROGRAM_NAME";
+$PROGRAM_NAME            = "gosh";
+$PROGRAM_SOURCE_PATH     = "$SCRIPT_DIR/src";
+$PROGRAM_INSTALL_PATH    = "$HOME_DIR/.stdmatt_bin";
+$PROGRAM_INSTALL_SUBPATH = "$PROGRAM_INSTALL_PATH/$PROGRAM_NAME";
 
 ##
 ## Script
@@ -20,16 +21,15 @@ $PROGRAM_INSTALL_PATH = "$HOME_DIR/.stdmatt_bin/$PROGRAM_NAME";
 echo "Installing ...";
 
 ## Create the install directory...
-if (-not (Test-Path -LiteralPath $PROGRAM_INSTALL_PATH)) {
+if (-not (Test-Path -LiteralPath $PROGRAM_INSTALL_SUBPATH)) {
     echo "Creating directory at: ";
-    echo "    $PROGRAM_INSTALL_PATH";
-    New-Item -Path $PROGRAM_INSTALL_PATH -ItemType Directory;
+    echo "    $PROGRAM_INSTALL_SUBPATH";
+    $null = New-Item -Path $PROGRAM_INSTALL_SUBPATH -ItemType Directory;
 }
 
 ## Copy the file to the install dir...
-cp -Force $PROGRAM_SOURCE_PATH/gosh-core.py $PROGRAM_INSTALL_PATH/gosh-core.py
+cp -Force $PROGRAM_SOURCE_PATH/gosh-core.py $PROGRAM_INSTALL_SUBPATH/gosh-core.py
 cp -Force $PROGRAM_SOURCE_PATH/gosh.ps1     $PROGRAM_INSTALL_PATH/gosh.ps1
-echo "@echo off `call $PROGRAM_INSTALL_PATH/gosh.ps1 %1 %2 %3 %4 %5 %6 %7 %8 %9" | Out-File -Encoding ASCII -FilePath $PROGRAM_INSTALL_PATH/$PROGRAM_NAME.bat
 
 echo "$PROGRAM_NAME was installed at:";
 echo "    $PROGRAM_INSTALL_PATH";
