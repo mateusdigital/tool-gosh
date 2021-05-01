@@ -28,7 +28,6 @@ import getopt;
 import pdb;
 import subprocess;
 from difflib import SequenceMatcher as SM;
-from pw_py_termcolor import *;
 
 
 ##----------------------------------------------------------------------------##
@@ -101,20 +100,21 @@ class Globals:
 class C:
     @staticmethod
     def red(msg):
-        return C._colored(msg, termcolor.RED);
+        return msg; ## C._colored(msg, termcolor.RED);
 
     @staticmethod
     def blue(msg):
-        return C._colored(msg, termcolor.BLUE);
+        return msg; ## C._colored(msg, termcolor.BLUE);
 
     @staticmethod
     def magenta(msg):
-        return C._colored(msg, termcolor.MAGENTA);
+        return msg ## C._colored(msg, termcolor.MAGENTA);
 
     @staticmethod
     def _colored(msg, color):
-        if(not Globals.opt_no_colors):
-            return termcolor.colored(msg, color);
+        ## @BUG(stdmatt): can't find the lib.
+        # if(not Globals.opt_no_colors):
+        #     return termcolor.colored(msg, color);
         return msg;
 
 
