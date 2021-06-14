@@ -28,15 +28,14 @@ import getopt;
 import pdb;
 import subprocess;
 from difflib import SequenceMatcher as SM;
-from pw_py_termcolor import *;
 
 
 ##----------------------------------------------------------------------------##
 ## Constants / Globals                                                        ##
 ##----------------------------------------------------------------------------##
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "1.0.0";
-PROGRAM_COPYRIGHT = "2015 - 2020";
+PROGRAM_VERSION   = "2.0.0";
+PROGRAM_COPYRIGHT = "2015 - 2021";
 
 ##------------------------------------------------------------------------------
 class Constants:
@@ -101,20 +100,21 @@ class Globals:
 class C:
     @staticmethod
     def red(msg):
-        return C._colored(msg, termcolor.RED);
+        return msg; ## C._colored(msg, termcolor.RED);
 
     @staticmethod
     def blue(msg):
-        return C._colored(msg, termcolor.BLUE);
+        return msg; ## C._colored(msg, termcolor.BLUE);
 
     @staticmethod
     def magenta(msg):
-        return C._colored(msg, termcolor.MAGENTA);
+        return msg ## C._colored(msg, termcolor.MAGENTA);
 
     @staticmethod
     def _colored(msg, color):
-        if(not Globals.opt_no_colors):
-            return termcolor.colored(msg, color);
+        ## @BUG(stdmatt): can't find the lib.
+        # if(not Globals.opt_no_colors):
+        #     return termcolor.colored(msg, color);
         return msg;
 
 
@@ -466,11 +466,8 @@ def action_list_bookmarks(long = False):
     exit(0);
 
 ##------------------------------------------------------------------------------
-def action_add_bookmark(name, path):
-    if(path is None or len(path) == 0):
-        path = ".";
-
-    if((name is None or len(name) == 0) and path == "."):
+def action_add_bookmark(name = ".", path = "."):
+    if(name == "." and path == "."):
         name = os.path.basename(canonize_path("."));
 
     #Must be valid name.
@@ -593,61 +590,46 @@ def action_print_bookmark(name):
     print(bookmark_path);
     exit(0);
 
+import argparse
 
 ##----------------------------------------------------------------------------##
 ## Script Initialization                                                      ##
 ##----------------------------------------------------------------------------##
 def main():
-    ##
-    ## gosh will pass as last parameter with user want color or not.
-    ## So we grab this information and remove them from list because
-    ## The other options will use the length of the list as a way to check
-    ## if the arguments are ok.
-    args = sys.argv[1:]
-    if(args[-1] == "no-colors"):
-        Globals.opt_no_colors = True;
-        args.pop();
+    parser = argparse.ArgumentParser(add_help=False);
 
-    ##
-    ## gosh.sh is using getopt(1) and it passes the arguments inside a pair
-    ## of single quotes - This method will remove them.
-    first_arg  = remove_enclosing_quotes(args[0]);
-    second_arg = remove_enclosing_quotes(args[1]) if len(args) > 1 else "";
-    third_arg  = remove_enclosing_quotes(args[2]) if len(args) > 2 else "";
+    parser.add_argument("-h", "--help"   ,   dest=None       ,            action="store_true");
+    parser.add_argument("-v", "--version",   dest=None       ,            action="store_true");
+    parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs=1  , action="store");
+    parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1  , action="store");
+    parser.add_argument("-l", "--list"   ,   dest=None       ,            action="store_true");
+    parser.add_argument("-L", "--list-long", dest=None       ,            action="store_true");
+    parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="*", action="store");
+    parser.add_argument("-r", "--remove" ,   dest="remove"   , nargs=1  , action="store");
+    parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2  , action="store");
 
-    ##
-    ## All the command line options are exclusive operations. i.e
-    ## they will run the requested command and exit after it.
-    ## Help / Version.
-    if(Constants.ACTION_HELP    == first_arg): print_help();
-    if(Constants.ACTION_VERSION == first_arg): print_version();
+    parser.add_argument("values", nargs="*"); ## Positional Values
 
-    ##
-    ## List.
-    if(Constants.ACTION_LIST      == first_arg): action_list_bookmarks();
-    if(Constants.ACTION_LIST_LONG == first_arg): action_list_bookmarks(long=True);
+    args = parser.parse_args();
 
-    ##
-    ## Add
-    if(Constants.ACTION_ADD == first_arg):
-        action_add_bookmark (second_arg, third_arg);
-    ##
-    ## Remove
-    if(Constants.ACTION_REMOVE == first_arg):
-        action_remove_bookmark(second_arg);
-    ##
-    ## Update
-    if(Constants.ACTION_UPDATE == first_arg):
-        action_update_bookmark(second_arg, third_arg);
-    ##
-    ## Exists
-    if(Constants.ACTION_EXISTS_BOOKMARK == first_arg):
-        action_bookmark_exists(second_arg);
-    ##
-    ## Print
-    if(Constants.ACTION_PRINT == first_arg):
-        action_print_bookmark(second_arg);
+    if  (args.help     ): print_help            ();
+    elif(args.version  ): print_version         ();
+    elif(args.exists   ): action_bookmark_exists(*args.exists);
+    elif(args.print    ): action_print_bookmark (*args.print );
+    elif(args.list     ): action_list_bookmarks ();
+    elif(args.list_long): action_list_bookmarks (long=True);
+    elif(args.remove   ): action_remove_bookmark(*args.remove);
+    elif(args.update   ): action_update_bookmark(*args.update);
 
+    ## args.add can be called without any argument, meaning that we want
+    ## to add the current path with the current base name as bookmark
+    ## so we need to compare it agaisnt None otherwise we can't capture
+    ## the case when we do gosh -a
+    elif(args.add is not None):
+        action_add_bookmark(*args.add);
+
+    elif(args.values):
+        action_print_bookmark(*args.values);
 
 if(__name__ == "__main__"):
     #If any error occurs in main, means that user is trying to use
