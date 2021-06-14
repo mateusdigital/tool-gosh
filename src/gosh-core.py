@@ -34,7 +34,7 @@ from difflib import SequenceMatcher as SM;
 ## Constants / Globals                                                        ##
 ##----------------------------------------------------------------------------##
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "2.0.0";
+PROGRAM_VERSION   = "2.1.0";
 PROGRAM_COPYRIGHT = "2015 - 2021";
 
 ##------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ class Constants:
     ## Some chars that are important to gosh.
     ## This char is used to pass the values back to gosh shell script.
     OUTPUT_META_CHAR   = "#";
-    BOOKMARK_SEPARATOR = ":";
+    BOOKMARK_SEPARATOR = ";";
 
     ##
     ## Kind of getopt flags but fixed in positions.
@@ -61,31 +61,6 @@ class Constants:
     ACTION_UPDATE          = "gosh_opt_update";
     ACTION_PRINT           = "gosh_opt_print";
     ACTION_EXISTS_BOOKMARK = "gosh_opt_exists_bookmark";
-
-    ##--------------------------------------------------------------------------
-    ## OSes names
-    ##  Thanks to ICB on StackOverflow
-    ##      https://stackoverflow.com/a/13874620/5482197
-    ## .---------------------.----------.
-    ## | System              | Value    |
-    ## |---------------------|----------|
-    ## | Linux (2.x and 3.x) | linux2   |
-    ## | Windows             | win32    |
-    ## | Windows/Cygwin      | cygwin   |
-    ## | Mac OS X            | darwin   |
-    ## | OS/2                | os2      |
-    ## | OS/2 EMX            | os2emx   |
-    ## | RiscOS              | riscos   |
-    ## | AtheOS              | atheos   |
-    ## | FreeBSD 7           | freebsd7 |
-    ## | FreeBSD 8           | freebsd8 |
-    ## '---------------------'----------'
-    OS_NAME_CYGWIN    = "cygwin";
-    OS_NAME_WINDOWS   = "win32";
-    OS_NAME_GNU_LINUX = "linux";
-    OS_NAME_NT        = "win32";
-    OS_NAME_OSX       = "darwin";
-    OS_NAME_BSD       = "bsd";
 
 ##------------------------------------------------------------------------------
 class Globals:
@@ -300,29 +275,10 @@ def canonize_path(path):
     return path;
 
 ##------------------------------------------------------------------------------
-def get_os_name():
-    name = sys.platform;
-
-    if  (Constants.OS_NAME_CYGWIN    in name): return Constants.OS_NAME_CYGWIN;
-    if  (Constants.OS_NAME_WINDOWS   in name): return Constants.OS_NAME_WINDOWS;
-    elif(Constants.OS_NAME_GNU_LINUX in name): return Constants.OS_NAME_GNU_LINUX;
-    elif(Constants.OS_NAME_OSX       in name): return Constants.OS_NAME_OSX;
-    elif(Constants.OS_NAME_BSD       in name): return Constants.OS_NAME_BSD;
-    else:
-        raise NotImplementedError;
-
-##------------------------------------------------------------------------------
-def make_relative_path(path):
+def clean_path(path):
     path = path.lstrip().rstrip();
-
-    if(get_os_name() == Constants.OS_NAME_CYGWIN):
-        home_path = _get_home_path_for_cygwin(path);
-    else:
-        home_path = canonize_path("~");
-
-    rel_path = "~/" + os.path.relpath(path, home_path);
-
-    return rel_path;
+    path = os.path.normpath(os.path.normcase(os.path.abspath(os.path.expanduser(path))));
+    return path.replace("\\", "/");
 
 ##------------------------------------------------------------------------------
 def remove_enclosing_quotes(value):
@@ -480,7 +436,7 @@ def action_add_bookmark(name = ".", path = "."):
     ensure_bookmark_existence_or_die(name, bookmark_shall_exists=False);
 
     ## Check if path is valid path.
-    added_path = make_relative_path(path);
+    added_path = clean_path(path);
     ensure_valid_path_or_die(added_path);
 
     ## Name and Path are valid... Add it and inform the user.
@@ -530,7 +486,7 @@ def action_update_bookmark(name, path):
     ensure_bookmark_existence_or_die(name, bookmark_shall_exists=True);
 
     ## Check if path is valid path.
-    updated_path = make_relative_path(path);
+    updated_path = clean_path(path);
     ensure_valid_path_or_die(updated_path);
 
     ## Bookmark exists and path is valid... Update it and inform the user.
