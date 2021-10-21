@@ -32,7 +32,7 @@ cp -f "$PROGRAM_SOURCE_PATH/gosh-core.py" "$PROGRAM_INSTALL_SUBPATH/gosh-core.py
 cp -f "$PROGRAM_SOURCE_PATH/gosh.sh"      "$PROGRAM_INSTALL_SUBPATH/gosh.sh";
 
 echo "$PROGRAM_NAME was installed at:";
-echo "source $PROGRAM_INSTALL_PATH/gosh.sh";
+echo "source $PROGRAM_INSTALL_SUBPATH/gosh.sh";
 
 echo "Done... ;D";
 echo "";
