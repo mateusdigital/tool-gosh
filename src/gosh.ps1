@@ -11,7 +11,7 @@
 ##  Date      : Aug 12, 2015                                                  ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
-##  Copyright : stdmatt - 2015 - 2019                                         ##
+##  Copyright : stdmatt - 2015 - 2021                                         ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##                                                                            ##
@@ -53,5 +53,9 @@ if(($has_short_flags) -or ($has_long_flags)) {
 ## Changing directory...
 else {
     $path = (& python3 $GOSH_EXE $args);
-    cd $path;
+    if (Test-Path -PathType Container $path) {
+        cd $path;
+    } else {
+        echo "$path";
+    }
 }
