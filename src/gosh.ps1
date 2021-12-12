@@ -25,7 +25,6 @@ $GOSH_EXE        = "$SCRIPT_DIR/gosh/gosh-core.py";
 ##----------------------------------------------------------------------------##
 ## Gosh                                                                       ##
 ##----------------------------------------------------------------------------##
-##
 ## No args, just list the bookmarks.
 if($args.Count -eq 0) {
     & python3 $GOSH_EXE --help;
@@ -53,7 +52,7 @@ if(($has_short_flags) -or ($has_long_flags)) {
 ## Changing directory...
 else {
     $path = (& python3 $GOSH_EXE $args);
-    if (Test-Path -PathType Container $path) {
+    if ($path -ne $null -and (Test-Path -PathType Container $path)) {
         cd $path;
     } else {
         echo "$path";
