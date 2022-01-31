@@ -6,7 +6,7 @@
 ##                   \__ \ || (_| | | | | | | (_| | |_| |_                    ##
 ##                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   ##
 ##                                                                            ##
-##  File      : gosh.sh                                                       ##
+##  File      : gosh.ps1                                                      ##
 ##  Project   : gosh                                                          ##
 ##  Date      : Aug 12, 2015                                                  ##
 ##  License   : GPLv3                                                         ##
@@ -16,7 +16,9 @@
 ##  Description :                                                             ##
 ##                                                                            ##
 ##---------------------------------------------------------------------------~##
-
+##----------------------------------------------------------------------------##
+## Constants                                                                  ##
+##----------------------------------------------------------------------------##
 $SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
 $SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
 $GOSH_EXE        = "$SCRIPT_DIR/gosh/gosh-core.py";
@@ -31,7 +33,7 @@ if($args.Count -eq 0) {
     return;
 }
 
-## Concat all the argumetn to make a string.
+## Concat all the arguments to make a string.
 ## Then search for the string for any flags.
 ## If we find this flags means that gosh is doing an action
 ## and we don't need to care about changing the directory.
