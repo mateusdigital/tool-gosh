@@ -37,14 +37,15 @@ from difflib import SequenceMatcher as SM;
 ##----------------------------------------------------------------------------##
 PROGRAM_NAME      = "gosh";
 PROGRAM_VERSION   = "2.1.0";
-PROGRAM_COPYRIGHT = "2015 - 2021";
+PROGRAM_COPYRIGHT = "2015 - 2021"; ## @TODO(stdmatt): Update the copyright years...
+
 
 ##------------------------------------------------------------------------------
 class Constants:
     ##
     ## Where the bookmarks will be stored.
-    PATH_DIR_RC  = os.path.expanduser("~/.stdmatt");
-    PATH_FILE_RC = os.path.expanduser(os.path.join(PATH_DIR_RC, "goshrc.txt"));
+    PATH_DIR_RC  = os.path.expanduser("~/.stdmatt/config");
+    PATH_FILE_RC = os.path.expanduser(os.path.join(PATH_DIR_RC, "gosh_paths.txt"));
 
     ##
     ## Some chars that are important to gosh.
