@@ -67,19 +67,6 @@ def name_for_fuzzy_name(fuzzy_name):
     return best_name;
 
 ##------------------------------------------------------------------------------
-def ensure_valid_bookmark_name_or_die(name):
-    ##
-    ## Check if name isn't empty...
-    if(name is None or len(name) == 0):
-        print_fatal("Missing arguments - name");
-
-    ##
-    ## Check if this name is a valid name.
-    if(((OUTPUT_META_CHAR   in name) or
-        (BOOKMARK_SEPARATOR in name))):
-        print_fatal("Bookmark name cannot contains, ('{1}', '{2}') chars.".format(
-            OUTPUT_META_CHAR, BOOKMARK_SEPARATOR
-        ));
 
 ##------------------------------------------------------------------------------
 def canonize_path(path):
@@ -99,14 +86,14 @@ def print_fatal(msg):
 ##------------------------------------------------------------------------------
 def print_help():
     print("""Usage:
-  gosh                        (Same as gosh -l)
-  gosh <name>                 (To change the directory)
-  gosh -h | -v                (Show help | version)
-  gosh -l | -L                (Show list of bookmarks)
-  gosh -p <name>              (Show path for bookmark)
-  gosh -e <path>              (Show bookmark for path)
-  gosh -a | -u <name> <path>  (Add | Update bookmark)
-  gosh -r <name>              (Remove the bookmark)
+  gosh                   (Same as gosh -l)
+  gosh <name>            (To change the directory)
+  gosh -h | -v           (Show help | version)
+  gosh -l | -L           (Show list of bookmarks)
+  gosh -p <name>         (Show path for bookmark)
+  gosh -e <path>         (Show bookmark for path)
+  gosh -a <name> <path>  (Add bookmark)
+  gosh -d <name>         (Delete the bookmark)
 
 Options:
   *-h --help     : Show this screen.
@@ -119,10 +106,7 @@ Options:
   *-L --list-long  : Show all Bookmarks and Paths.
 
   *-a --add    <name> <path>  : Add a Bookmark with specified path.
-  *-r --remove <name>         : Remove a Bookmark.
-  *-u --update <name> <path>  : Update a Bookmark to path.
-
-  -n --no-colors : Print the output without colors.
+  *-r --delete <name>         : Delete a Bookmark.
 
 Notes:
   If <path> is blank the current dir is assumed.
@@ -162,7 +146,7 @@ parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1  , action="st
 parser.add_argument("-l", "--list"   ,   dest=None       ,            action="store_true");
 parser.add_argument("-L", "--list-long", dest=None       ,            action="store_true");
 parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="*", action="store");
-parser.add_argument("-r", "--remove" ,   dest="remove"   , nargs=1  , action="store");
+parser.add_argument("-d", "--delete" ,   dest="delete"   , nargs=1  , action="store");
 parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2  , action="store");
 
 parser.add_argument("values", nargs="*"); ## Positional Values
@@ -226,13 +210,12 @@ if(args.exists is not None):
 
 ##
 ## Print
-elif(args.print is not None):
-    if(len(name) == 0):
-        print_fatal("Missing args - name.");
-
+elif(args.print is not None or len(args.values) != 0):
+    name       = args.print[0] if(args.print is not None) else args.values[0];
     clean_name = name_for_fuzzy_name(name);
+
     if(clean_name not in bookmarks.keys()):
-        print("Bookmark ({0}) doesn't exists.".format(name));
+        print("Bookmark ({0}) doesn't exists.".format(clean_name));
         exit(1);
 
     ## Bookmark exists, check if path is valid.
@@ -266,20 +249,20 @@ elif(args.list or args.list_long):
                 print(key);
 
 ##
-## Remove
-elif(args.remove is not None):
+## Delete
+elif(args.delete is not None):
+    name       = args.delete[0];
     clean_name = name_for_fuzzy_name(name);
 
-    ## Must be valid name.
-    ensure_valid_bookmark_name_or_die(name);
-
     ## Check if we actually have a bookmark with this name.
-    if(name not in bookmarks.keys()):
-        print_fatal("Bookmark ({0}) doesn't exists.".format(name));
+    if(clean_name not in bookmarks.keys()):
+        print_fatal("Bookmark ({0}) doesn't exists.".format(clean_name));
 
-    ## Bookmark exists... Remove it and inform the user.
-    del bookmarks[name];
-    print("Bookmark removed:\n  ({0})".format(name));
+    ## Bookmark exists... Delete it and inform the user.
+    del bookmarks[clean_name];
+    something_was_changed = True;
+
+    print("Bookmark deleted:\n  ({0})".format(name));
 
 ##
 ## Add
@@ -302,22 +285,18 @@ elif(args.add is not None):
         clean_name = os.path.basename(clean_path);
 
     ## Check if we have this bookmark, since we are adding we cannot have it.
-    if(name in bookmarks.keys()):
-        print_fatal("Bookmark ({0}) already exists.".format(name));
+    if(clean_name in bookmarks.keys()):
+        print_fatal("Bookmark ({0}) already exists.".format(clean_name));
 
     ## Check if path is valid path.
     if(not os.path.isdir(clean_path)):
         print_fatal("Path ({0}) is not a valid directory.".format(clean_path));
 
     ## Name and Path are valid... Add it and inform the user.
-    bookmarks[name]       = clean_path;
+    bookmarks[clean_name] = clean_path;
     something_was_changed = True;
 
-    print("Bookmark added:\n  ({0}) - ({1})".format(name, clean_path));
-
-elif(args.values):
-    action_print_bookmark(*args.values);
-
+    print("Bookmark added:\n  ({0}) - ({1})".format(clean_name, clean_path));
 
 ##
 ## Save the bookmarks in disk. Sort them before just as convenience for
