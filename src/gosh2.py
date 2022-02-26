@@ -157,7 +157,7 @@ parser = argparse.ArgumentParser(add_help=False);
 
 parser.add_argument("-h", "--help"   ,   dest=None       ,            action="store_true");
 parser.add_argument("-v", "--version",   dest=None       ,            action="store_true");
-parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs=1  , action="store");
+parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs="*", action="store");
 parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1  , action="store");
 parser.add_argument("-l", "--list"   ,   dest=None       ,            action="store_true");
 parser.add_argument("-L", "--list-long", dest=None       ,            action="store_true");
@@ -208,7 +208,7 @@ for line in bookmark_lines:
 
 ##
 ## Exists
-if(args.exists):
+if(args.exists is not None):
     path       = args.exists[0] if len(args.exists) >= 1 else ".";
     clean_path = canonize_path(path);
 
@@ -226,7 +226,7 @@ if(args.exists):
 
 ##
 ## Print
-elif(args.print):
+elif(args.print is not None):
     if(len(name) == 0):
         print_fatal("Missing args - name.");
 
@@ -267,7 +267,7 @@ elif(args.list or args.list_long):
 
 ##
 ## Remove
-elif(args.remove):
+elif(args.remove is not None):
     clean_name = name_for_fuzzy_name(name);
 
     ## Must be valid name.
@@ -287,7 +287,7 @@ elif(args.remove):
 ##   to add the current path with the current base name as bookmark
 ##   so we need to compare it agaisnt None otherwise we can't capture
 ##   the case when we do gosh -a
-elif(args.add):
+elif(args.add is not None):
     name = ".";
     path = ".";
     if(len(args.add) >= 2):
