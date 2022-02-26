@@ -194,30 +194,28 @@ if(not os.path.isfile(BOOKMARKS_FILE_PATH)):
 ##
 ## Open the filename and read all bookmarks that are in format of:
 ##    BookmarkName : BookmarkSeparator (Note that the ':' is the separator)
-bookmarks_file = open(BOOKMARKS_FILE_PATH, "w+");
-for line in bookmarks_file.readlines():
-    bookmark   = bookmark.replace("\n", "");
-    name, path = bookmark.split(BOOKMARK_SEPARATOR);
+bookmarks_file = open(BOOKMARKS_FILE_PATH, "r+");
+bookmark_lines = bookmarks_file.readlines()
+for line in bookmark_lines:
+    clean_line = line.replace("\n", "").strip();
+    name, path = clean_line.split(BOOKMARK_SEPARATOR);
 
     ## Trim all white spaces.
-    name = name.replace(" ", "");
-    path = path.lstrip().rstrip();
+    clean_name = name.strip();
+    clean_path = path.strip();
 
-    bookmarks[name] = path;
+    bookmarks[clean_name] = clean_path;
 
 ##
 ## Exists
 if(args.exists):
-    if(path is None or len(path) == 0):
-        path = ".";
+    path       = args.exists[0] if len(args.exists) >= 1 else ".";
+    clean_path = canonize_path(path);
 
     bookmark_name = None;
-    clean_path    = canonize_path(path);
-
     for name in bookmarks.keys():
-        path = bookmarks[name];
-        path = canonize_path(path);
-        if(path == clean_path):
+        bookmark_path = bookmarks[name];
+        if(bookmark_path == clean_path):
             bookmark_name = name;
             break;
 
@@ -289,23 +287,33 @@ elif(args.remove):
 ##   to add the current path with the current base name as bookmark
 ##   so we need to compare it agaisnt None otherwise we can't capture
 ##   the case when we do gosh -a
-elif(args.add is not None):
+elif(args.add):
+    name = ".";
+    path = ".";
+    if(len(args.add) >= 2):
+        path = args.add[1];
+    if(len(args.add) >= 1):
+        name = args.add[0];
+
+    ## Make the directory by the name if nothing was given.
+    clean_path = canonize_path(path);
+    clean_name = name;
     if(name == "." and path == "."):
-        name = os.path.basename(canonize_path("."));
+        clean_name = os.path.basename(clean_path);
 
     ## Check if we have this bookmark, since we are adding we cannot have it.
     if(name in bookmarks.keys()):
         print_fatal("Bookmark ({0}) already exists.".format(name));
 
-
     ## Check if path is valid path.
-    added_path = canonize_path(path);
-    if(not os.path.isdir(added_path)):
-        print_fatal("Path ({0}) is not a valid directory.".format(added_path));
+    if(not os.path.isdir(clean_path)):
+        print_fatal("Path ({0}) is not a valid directory.".format(clean_path));
 
     ## Name and Path are valid... Add it and inform the user.
-    bookmarks[name] = added_path;
-    print("Bookmark added:\n  ({0}) - ({1})".format(name,added_path));
+    bookmarks[name]       = clean_path;
+    something_was_changed = True;
+
+    print("Bookmark added:\n  ({0}) - ({1})".format(name, clean_path));
 
 elif(args.values):
     action_print_bookmark(*args.values);
@@ -321,3 +329,5 @@ if(something_was_changed):
             key, BOOKMARK_SEPARATOR, bookmarks[key]
         );
     bookmarks_file.write(bookmarks_str);
+
+bookmarks_file.close();
