@@ -1,4 +1,3 @@
-#!/usr/bin/env pwsh
 ##----------------------------------------------------------------------------##
 ##                        _      _                 _   _                      ##
 ##                       | |    | |               | | | |                     ##
@@ -49,8 +48,11 @@ if (-not (Test-Path -LiteralPath $PROGRAM_INSTALL_SUB_PATH)) {
 }
 
 ## Copy the file to the install dir...
-Copy-Item -Force $PROGRAM_SOURCE_PATH/gosh2.py     `
+Copy-Item -Force $PROGRAM_SOURCE_PATH/gosh2.py `
                  $PROGRAM_INSTALL_SUB_PATH/gosh2.py
+Copy-Item -Force $PROGRAM_SOURCE_PATH/gosh.ps1 `
+                 $PROGRAM_INSTALL_ROOT_PATH/gosh.ps1;
+
 
 echo "$PROGRAM_NAME was installed at:";
 echo "    $PROGRAM_INSTALL_ROOT_PATH";
