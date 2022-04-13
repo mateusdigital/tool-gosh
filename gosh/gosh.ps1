@@ -20,8 +20,8 @@
 ## Constants                                                                  ##
 ##----------------------------------------------------------------------------##
 $SCRIPT_FULLPATH = $MyInvocation.MyCommand.Path;
-$SCRIPT_DIR      = Split-Path "$SCRIPT_FULLPATH" -Parent;
-$GOSH_EXE        = "$SCRIPT_DIR/gosh/gosh-core.py";
+$SCRIPT_DIR      = (Split-Path "$SCRIPT_FULLPATH" -Parent);
+$GOSH_EXE        = "$SCRIPT_DIR/gosh_/gosh2.py";
 
 
 ##----------------------------------------------------------------------------##
