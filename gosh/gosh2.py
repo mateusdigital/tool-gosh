@@ -223,7 +223,7 @@ elif(args.print is not None or len(args.values) != 0):
     clean_path = canonize_path(path);
 
     if(not os.path.isdir(clean_path)):
-        print("Bookmark ({0}) exists but it's path is invalid ({2})".format(
+        print("Bookmark ({0}) exists but it's path is invalid ({1})".format(
             clean_name, clean_path
         ));
     else:
