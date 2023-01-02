@@ -37,11 +37,11 @@ from difflib import SequenceMatcher as SM;
 ##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "3.0.0";
-PROGRAM_COPYRIGHT = "2015 - 2022";
+PROGRAM_VERSION   = "4.0.0";
+PROGRAM_COPYRIGHT = "2015 - 2023";
 ##------------------------------------------------------------------------------
 ## Location of the paths file.
-BOOKMARKS_FILE_DIR  = os.path.expanduser("~/.stdmatt/config");
+BOOKMARKS_FILE_DIR  = os.path.expanduser("~/.config/gosh");
 BOOKMARKS_FILE_PATH = os.path.join(BOOKMARKS_FILE_DIR, "gosh-paths.txt");
 ##------------------------------------------------------------------------------
 ## Some chars that are important to gosh.
@@ -108,7 +108,7 @@ Options:
   *-r --delete <name>         : Delete a Bookmark.
 
 Notes:
-  If <path> is blank the current dir is assumed.
+  If <path> is blank the current directory is assumed.
 
   Options marked with * are exclusive, i.e. the gosh will run that
   and exit after the operation.
@@ -172,13 +172,12 @@ something_was_changed = False;
 if(not os.path.isdir(BOOKMARKS_FILE_DIR)):
     os.makedirs(BOOKMARKS_FILE_DIR);
 if(not os.path.isfile(BOOKMARKS_FILE_PATH)):
-    open(BOOKMARKS_FILE_PATH, "w").close();
+    open(BOOKMARKS_FILE_PATH, "w").close(); ## @leak: don't care...
 
 ##
 ## Open the filename and read all bookmarks that are in format of:
 ##    BookmarkName : BookmarkSeparator (Note that the ':' is the separator)
-bookmarks_file = open(BOOKMARKS_FILE_PATH, "r+");
-bookmark_lines = bookmarks_file.readlines()
+bookmark_lines = open(BOOKMARKS_FILE_PATH, "r").readlines(); ## @leak: don't care...
 for line in bookmark_lines:
     clean_line = line.replace("\n", "").strip();
     name, path = clean_line.split(BOOKMARK_SEPARATOR);
@@ -300,12 +299,14 @@ elif(args.add is not None):
 ##
 ## Save the bookmarks in disk. Sort them before just as convenience for
 ## who wants to mess with them in an editor.
-if(something_was_changed):
-    bookmarks_str = "";
-    for key in sorted(bookmarks.keys()):
-        bookmarks_str += "{0} {1} {2}\n".format(
-            key, BOOKMARK_SEPARATOR, bookmarks[key]
-        );
-    bookmarks_file.write(bookmarks_str);
+bookmarks_str = "";
+for key in sorted(bookmarks.keys()):
+    bookmarks_str += "{0} {1} {2}\n".format(
+        key, BOOKMARK_SEPARATOR, bookmarks[key]
+    );
 
+bookmarks_file = open(BOOKMARKS_FILE_PATH, "w");
+bookmarks_file.write(bookmarks_str);
 bookmarks_file.close();
+
+print(bookmarks_str);
