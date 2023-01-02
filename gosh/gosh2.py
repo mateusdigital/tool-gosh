@@ -11,12 +11,13 @@
 ##  Date      : Sep 28, 2015 - gosh-core.py                                   ##
 ##              Feb 25, 2022 - gosh2.py                                       ##
 ##  License   : GPLv3                                                         ##
-##  Author    : stdmatt <stdmatt@pixelwizards.io>                             ##
-##  Copyright : stdmatt - 2015 - 2022                                         ##
+##  Author    : mateus-earth <mateus@cosmicpig.digital>                       ##
+##  Copyright : mateus-earth - 2015 - 2023                                    ##
 ##                                                                            ##
 ##  Description :                                                             ##
-##                                                                            ##
-##---------------------------------------------------------------------------~##
+##    Manages bookmarks on the shell, making easy to navigate deep paths.     ##
+##----------------------------------------------------------------------------##
+
 
 ##----------------------------------------------------------------------------##
 ## Imports                                                                    ##
@@ -65,8 +66,6 @@ def name_for_fuzzy_name(fuzzy_name):
             return k;
 
     return best_name;
-
-##------------------------------------------------------------------------------
 
 ##------------------------------------------------------------------------------
 def canonize_path(path):
@@ -118,10 +117,10 @@ Notes:
 ##------------------------------------------------------------------------------
 def print_version():
     msg = "\n".join([
-        "{program_name} - {program_version} - stdmatt <stdmatt@pixelwizards.io>",
-        "Copyright (c) {program_copyright} - stdmatt",
+        "{program_name} - {program_version} - mateus-earth <mateus@cosmicpig.digital>",
+        "Copyright (c) {program_copyright} - mateus-earth",
         "This is a free software (GPLv3) - Share/Hack it",
-        "Check http://stdmatt.com for more :)"]);
+        "Check http://mateus.earth for more :)"]);
 
     msg = msg.format(
         program_name=PROGRAM_NAME,
