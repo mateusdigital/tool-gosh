@@ -308,5 +308,3 @@ for key in sorted(bookmarks.keys()):
 bookmarks_file = open(BOOKMARKS_FILE_PATH, "w");
 bookmarks_file.write(bookmarks_str);
 bookmarks_file.close();
-
-print(bookmarks_str);
