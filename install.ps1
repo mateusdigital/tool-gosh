@@ -35,7 +35,7 @@ $HOME_DIR        = if($HOME -eq "") { "$env:USERPROFILE" } else { $HOME };
 $PROGRAM_NAME              = "gosh";
 $DIRECTORY_NAME            = "${PROGRAM_NAME}_";
 $PROGRAM_SOURCE_PATH       = "$SCRIPT_DIR/$PROGRAM_NAME";
-$PROGRAM_INSTALL_ROOT_PATH = "$HOME_DIR/.stdmatt/bin";
+$PROGRAM_INSTALL_ROOT_PATH = "$HOME_DIR/.mateusdigital/bin";
 $PROGRAM_INSTALL_SUB_PATH  = "$PROGRAM_INSTALL_ROOT_PATH/$DIRECTORY_NAME";
 
 
