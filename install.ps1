@@ -34,21 +34,21 @@ $HOME_DIR        = if($HOME -eq "") { "$env:USERPROFILE" } else { $HOME };
 ## Program
 $PROGRAM_NAME              = "gosh";
 $DIRECTORY_NAME            = "${PROGRAM_NAME}_";
-$PROGRAM_SOURCE_PATH       = "$SCRIPT_DIR/$PROGRAM_NAME";
-$PROGRAM_INSTALL_ROOT_PATH = "$HOME_DIR/.mateusdigital/bin";
-$PROGRAM_INSTALL_SUB_PATH  = "$PROGRAM_INSTALL_ROOT_PATH/$DIRECTORY_NAME";
+$PROGRAM_SOURCE_PATH       = "${SCRIPT_DIR}/${PROGRAM_NAME}";
+$PROGRAM_INSTALL_ROOT_PATH = "${HOME_DIR}/.mateusdigital/bin";
+$PROGRAM_INSTALL_SUB_PATH  = "${PROGRAM_INSTALL_ROOT_PATH}/${DIRECTORY_NAME}";
 
 
 ##----------------------------------------------------------------------------##
 ## Script                                                                     ##
 ##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
-echo "Installing ...";
+Write-Output "Installing ...";
 
 ## Create the install directory...
 if (-not (Test-Path -LiteralPath $PROGRAM_INSTALL_SUB_PATH)) {
-    echo "Creating directory at: ";
-    echo "    $PROGRAM_INSTALL_SUB_PATH";
+    Write-Output "Creating directory at: ";
+    Write-Output "    $PROGRAM_INSTALL_SUB_PATH";
     $null = (New-Item -Path $PROGRAM_INSTALL_SUB_PATH -ItemType Directory -Force);
 }
 
@@ -59,9 +59,9 @@ Copy-Item -Force $PROGRAM_SOURCE_PATH/gosh.ps1 `
                  $PROGRAM_INSTALL_ROOT_PATH/gosh.ps1;
 
 
-echo "$PROGRAM_NAME was installed at:";
-echo "    $PROGRAM_INSTALL_ROOT_PATH";
-echo "You might need add it to the PATH";
+Write-Output "$PROGRAM_NAME was installed at:";
+Write-Output "    $PROGRAM_INSTALL_ROOT_PATH";
+Write-Output "You might need add it to the PATH";
 
-echo "Done... ;D";
-echo "";
+Write-Output "Done... ;D";
+Write-Output "";
