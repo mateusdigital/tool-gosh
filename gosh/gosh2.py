@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
-##~---------------------------------------------------------------------------##
-##                        _      _                 _   _                      ##
-##                    ___| |_ __| |_ __ ___   __ _| |_| |_                    ##
-##                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   ##
-##                   \__ \ || (_| | | | | | | (_| | |_| |_                    ##
-##                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   ##
+##----------------------------------------------------------------------------##
+##                               *       +                                    ##
+##                         '                  |                               ##
+##                     ()    .-.,="``"=.    - o -                             ##
+##                           '=/_       \     |                               ##
+##                        *   |  '=._    |                                    ##
+##                             \     `=./`,        '                          ##
+##                          .   '=.__.=' `='      *                           ##
+##                 +                         +                                ##
+##                      O      *        '       .                             ##
 ##                                                                            ##
 ##  File      : gosh2.py                                                      ##
 ##  Project   : gosh                                                          ##
 ##  Date      : Sep 28, 2015 - gosh-core.py                                   ##
 ##              Feb 25, 2022 - gosh2.py                                       ##
-##  License   : GPLv3                                                         ##
-##  Author    : mateus-earth <mateus@cosmicpig.digital>                       ##
-##  Copyright : mateus-earth - 2015 - 2023                                    ##
+##  License   : See project's COPYING.TXT for full info.                      ##
+##  Author    : mateus.digital <hello@mateus.digital>                         ##
+##  Copyright : mateus.digital - 2015 - 2025                                  ##
 ##                                                                            ##
 ##  Description :                                                             ##
-##    Manages bookmarks on the shell, making easy to navigate deep paths.     ##
+##                                                                            ##
 ##----------------------------------------------------------------------------##
-
 
 ##----------------------------------------------------------------------------##
 ## Imports                                                                    ##
@@ -37,8 +40,8 @@ from difflib import SequenceMatcher as SM;
 ##----------------------------------------------------------------------------##
 ##------------------------------------------------------------------------------
 PROGRAM_NAME      = "gosh";
-PROGRAM_VERSION   = "4.0.0";
-PROGRAM_COPYRIGHT = "2015 - 2023";
+PROGRAM_VERSION   = "5.0.0";
+PROGRAM_COPYRIGHT = "2015 - 2025";
 ##------------------------------------------------------------------------------
 ## Location of the paths file.
 BOOKMARKS_FILE_DIR  = os.path.expanduser("~/.config/gosh");
@@ -117,10 +120,10 @@ Notes:
 ##------------------------------------------------------------------------------
 def print_version():
     msg = "\n".join([
-        "{program_name} - {program_version} - mateus-earth <mateus@cosmicpig.digital>",
-        "Copyright (c) {program_copyright} - mateus-earth",
+        "{program_name} - {program_version} - mateus.digital <hello@mateus.digital>",
+        "Copyright (c) {program_copyright} - mateus.digital",
         "This is a free software (GPLv3) - Share/Hack it",
-        "Check http://mateus.earth for more :)"]);
+        "Check http://mateus.digital for more :)"]);
 
     msg = msg.format(
         program_name=PROGRAM_NAME,
@@ -138,15 +141,16 @@ def print_version():
 ## Parse the Command Line
 parser = argparse.ArgumentParser(add_help=False);
 
-parser.add_argument("-h", "--help"   ,   dest=None       ,            action="store_true");
-parser.add_argument("-v", "--version",   dest=None       ,            action="store_true");
-parser.add_argument("-e", "--exists" ,   dest="exists"   , nargs="*", action="store");
-parser.add_argument("-p", "--print"  ,   dest="print"    , nargs=1  , action="store");
-parser.add_argument("-l", "--list"   ,   dest=None       ,            action="store_true");
-parser.add_argument("-L", "--list-long", dest=None       ,            action="store_true");
-parser.add_argument("-a", "--add"    ,   dest="add"      , nargs="*", action="store");
-parser.add_argument("-d", "--delete" ,   dest="delete"   , nargs=1  , action="store");
-parser.add_argument("-u", "--update" ,   dest="update"   , nargs=2  , action="store");
+parser.add_argument("-h", "--help"   ,       dest=None       ,            action="store_true");
+parser.add_argument("-v", "--version",       dest=None       ,            action="store_true");
+parser.add_argument("-e", "--exists" ,       dest="exists"   , nargs="*", action="store");
+parser.add_argument("-p", "--print"  ,       dest="print"    , nargs=1  , action="store");
+parser.add_argument("-l", "--list"   ,       dest=None       ,            action="store_true");
+parser.add_argument("-L", "--list-long",     dest=None       ,            action="store_true");
+parser.add_argument("-a", "--add"    ,       dest="add"      , nargs="*", action="store");
+parser.add_argument("-d", "--delete" ,       dest="delete"   , nargs=1  , action="store");
+parser.add_argument("-u", "--update" ,       dest="update"   , nargs=2  , action="store");
+parser.add_argument("-E", "--edit-paths" ,   dest="edit_paths",           action="store_true");
 
 parser.add_argument("values", nargs="*"); ## Positional Values
 args = parser.parse_args();
@@ -158,6 +162,9 @@ if(args.help):
     exit(0);
 elif(args.version):
     print_version();
+    exit(0);
+elif(args.edit_paths):
+    print(BOOKMARKS_FILE_PATH);
     exit(0);
 
 ##
