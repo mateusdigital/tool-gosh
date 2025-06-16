@@ -58,8 +58,8 @@ if(($has_short_flags) -or ($has_long_flags)) {
 ## Changing directory...
 else {
     $path = (& $PYTHON_EXE $GOSH_EXE $args);
-    if ($path -ne $null -and (Test-Path -PathType Container $path)) {
-        cd $path;
+    if (($null -ne $path) -and (Test-Path -PathType Container $path)) {
+        Set-Location $path;
     } else {
         Write-Output "$path";
     }
