@@ -44,7 +44,7 @@ PROGRAM_VERSION   = "5.0.0";
 PROGRAM_COPYRIGHT = "2015 - 2025";
 ##------------------------------------------------------------------------------
 ## Location of the paths file.
-BOOKMARKS_FILE_DIR  = os.path.expanduser("~/.config/gosh");
+BOOKMARKS_FILE_DIR  = os.path.expanduser("~/.mateusdigital/config/gosh");
 BOOKMARKS_FILE_PATH = os.path.join(BOOKMARKS_FILE_DIR, "gosh-paths.txt");
 ##------------------------------------------------------------------------------
 ## Some chars that are important to gosh.
