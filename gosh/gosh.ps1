@@ -27,6 +27,14 @@ $SCRIPT_DIR      = (Split-Path "$SCRIPT_FULLPATH" -Parent);
 $GOSH_EXE        = "$SCRIPT_DIR/gosh_/gosh2.py";
 $PYTHON_EXE      = "python";
 
+if($IsMacOS) {
+    $python_path  = (which python);
+    if($python_path) {
+        $PYTHON_EXE = "$python_path";
+    } else {
+        $PYTHON_EXE = "python3"
+    }
+}
 
 ##----------------------------------------------------------------------------##
 ## Gosh                                                                       ##
