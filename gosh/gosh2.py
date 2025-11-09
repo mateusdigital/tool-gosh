@@ -110,6 +110,8 @@ Options:
   *-a --add    <name> <path>  : Add a Bookmark with specified path.
   *-r --delete <name>         : Delete a Bookmark.
 
+  *-E --edit                  : Open default editor to edit the bookmarks file.
+
 Notes:
   If <path> is blank the current directory is assumed.
 
@@ -134,6 +136,7 @@ def print_version():
     print(msg);
 
 
+
 ##----------------------------------------------------------------------------##
 ## Script                                                                     ##
 ##----------------------------------------------------------------------------##
@@ -150,7 +153,7 @@ parser.add_argument("-L", "--list-long",     dest=None       ,            action
 parser.add_argument("-a", "--add"    ,       dest="add"      , nargs="*", action="store");
 parser.add_argument("-d", "--delete" ,       dest="delete"   , nargs=1  , action="store");
 parser.add_argument("-u", "--update" ,       dest="update"   , nargs=2  , action="store");
-parser.add_argument("-E", "--edit-paths" ,   dest="edit_paths",           action="store_true");
+parser.add_argument("-E", "--edit"   ,       dest="edit_paths",           action="store_true");
 
 parser.add_argument("values", nargs="*"); ## Positional Values
 args = parser.parse_args();
@@ -181,19 +184,35 @@ if(not os.path.isdir(BOOKMARKS_FILE_DIR)):
 if(not os.path.isfile(BOOKMARKS_FILE_PATH)):
     open(BOOKMARKS_FILE_PATH, "w").close(); ## @leak: don't care...
 
+
 ##
 ## Open the filename and read all bookmarks that are in format of:
 ##    BookmarkName : BookmarkSeparator (Note that the ':' is the separator)
 bookmark_lines = open(BOOKMARKS_FILE_PATH, "r").readlines(); ## @leak: don't care...
 for line in bookmark_lines:
-    clean_line = line.replace("\n", "").strip();
-    name, path = clean_line.split(BOOKMARK_SEPARATOR);
+    clean_line = line.replace("\n", "").strip()
+    if not clean_line:
+        continue
 
-    ## Trim all white spaces.
-    clean_name = name.strip();
-    clean_path = path.strip();
+    split = clean_line.split(BOOKMARK_SEPARATOR)
 
-    bookmarks[clean_name] = clean_path;
+    if len(split) < 2:
+        continue
+
+    name = split[0].strip()
+    path = split[1].strip()
+
+    count = 0
+    if len(split) >= 3:
+        try:
+            count = int(split[2])
+        except:
+            count = 0
+
+    bookmarks[name] = {
+        "path": path,
+        "count": count
+    }
 
 ##
 ## Exists
@@ -203,7 +222,7 @@ if(args.exists is not None):
 
     bookmark_name = None;
     for name in bookmarks.keys():
-        bookmark_path = bookmarks[name];
+        bookmark_path = bookmarks[name]["path"];
         if(bookmark_path == clean_path):
             bookmark_name = name;
             break;
@@ -224,7 +243,7 @@ elif(args.print is not None or len(args.values) != 0):
         exit(1);
 
     ## Bookmark exists, check if path is valid.
-    path       = bookmarks[clean_name];
+    path       = bookmarks[clean_name]["path"];
     clean_path = canonize_path(path);
 
     if(not os.path.isdir(clean_path)):
@@ -248,8 +267,9 @@ elif(args.list or args.list_long):
             spaces = " " * (max_len - len(key)); ## Put spaces to align the names.
             path   = bookmarks[key];
 
+            print(bookmarks)
             if(args.list_long):
-                print("{0}{1} : {2}".format(key, spaces, path));
+                print("{0}{1} : {2}".format(key, spaces, entry["path"]))
             else:
                 print(key);
 
@@ -298,7 +318,7 @@ elif(args.add is not None):
         print_fatal("Path ({0}) is not a valid directory.".format(clean_path));
 
     ## Name and Path are valid... Add it and inform the user.
-    bookmarks[clean_name] = clean_path;
+    bookmarks[clean_name] = { "path": clean_path, "count": 0 };
     something_was_changed = True;
 
     print("Bookmark added:\n  ({0}) - ({1})".format(clean_name, clean_path));
@@ -308,10 +328,13 @@ elif(args.add is not None):
 ## who wants to mess with them in an editor.
 bookmarks_str = "";
 for key in sorted(bookmarks.keys()):
-    bookmarks_str += "{0} {1} {2}\n".format(
-        key, BOOKMARK_SEPARATOR, bookmarks[key]
-    );
-
+    entry = bookmarks[key]
+    bookmarks_str += "{0}{1}{2}{1}{3}\n".format(
+        key,
+        BOOKMARK_SEPARATOR,
+        entry["path"],
+        entry["count"]
+    )
 bookmarks_file = open(BOOKMARKS_FILE_PATH, "w");
 bookmarks_file.write(bookmarks_str);
 bookmarks_file.close();
