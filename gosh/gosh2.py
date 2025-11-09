@@ -253,6 +253,9 @@ elif(args.print is not None or len(args.values) != 0):
     else:
         print(clean_path);
 
+    bookmarks[clean_name]["count"] += 1;
+    something_was_changed = True;
+
 ##
 ## List
 elif(args.list or args.list_long):
@@ -265,9 +268,8 @@ elif(args.list or args.list_long):
         max_len = max(map(len, bookmarks.keys()));
         for key in sorted(bookmarks.keys()):
             spaces = " " * (max_len - len(key)); ## Put spaces to align the names.
-            path   = bookmarks[key];
+            entry  = bookmarks[key];
 
-            print(bookmarks)
             if(args.list_long):
                 print("{0}{1} : {2}".format(key, spaces, entry["path"]))
             else:
